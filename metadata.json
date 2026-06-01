@@ -1,0 +1,6 @@
+{
+  "name": "EventHub Kampus",
+  "description": "Sistem Informasi Event & Kepanitiaan Universitas Nurul Fikri",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
