@@ -10,13 +10,14 @@ import { formatDate } from "../../../../lib/utils";
 import Toast, { ToastContainer } from "../../../../components/Toast";
 
 export default function POAuditCertificates() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
 
   const [certs, setCerts] = useState<UserCertificate[]>([]);
   const [toasts, setToasts] = useState<{ id: string; message: string; type: "success" | "error" | "info" }[]>([]);
 
   useEffect(() => {
+    if (loading) return;
     if (!user || user.role !== "po") {
       router.push("/login");
       return;
@@ -28,7 +29,7 @@ export default function POAuditCertificates() {
     } else {
       setCerts(INITIAL_CERTIFICATES);
     }
-  }, [user, router]);
+  }, [user, loading, router]);
 
   const addToast = (message: string, type: "success" | "error" | "info") => {
     const id = Math.random().toString();
@@ -53,6 +54,8 @@ export default function POAuditCertificates() {
   };
 
   const pendingCerts = certs.filter((c) => !c.isApprovedByPO);
+
+  if (loading || !user) return null;
 
   return (
     <Workspace id="po_audit_certificates_workspace">

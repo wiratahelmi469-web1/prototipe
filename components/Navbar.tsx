@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
-import { Bell, User, LogOut, Menu, X, Shield, Calendar, Layers, Layers3, Flame, RefreshCw } from "lucide-react";
+import { Bell, User, LogOut, Menu, X, Shield, Calendar, Layers, Layers3, Flame } from "lucide-react";
 import { INITIAL_NOTIFICATIONS, NotificationItem } from "../lib/mockData";
 import { formatDate } from "../lib/utils";
 
@@ -13,7 +13,7 @@ interface NavbarProps {
 }
 
 export default function Navbar() {
-  const { user, logout, login } = useAuth();
+  const { user, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
@@ -64,28 +64,16 @@ export default function Navbar() {
     { name: "Dashboard", href: activeRole === "staff" ? "/dashboard/staff" : `/dashboard/${activeRole}`, roles: ["mahasiswa", "panitia", "po", "staff"] },
     { name: "Scan QR", href: "/dashboard/panitia/scan", roles: ["panitia"] },
     { name: "Sertifikat", href: "/dashboard/panitia/sertifikat", roles: ["panitia", "po"] },
+    {
+      name: "💬 Chat",
+      href: activeRole === "staff"
+        ? "/dashboard/staff/chat"
+        : `/dashboard/${activeRole}/chat`,
+      roles: ["mahasiswa", "panitia", "po", "staff"]
+    }
   ];
 
   const visibleMenuItems = menuItems.filter(item => item.roles.includes(activeRole));
-
-  // Switch role helper for demo testing
-  const handlePrototypeSwitchRole = async (targetRole: string) => {
-    let email = "mahasiswa@nurulfikri.ac.id";
-    let name = "Ahmad Junaidi";
-    if (targetRole === "po") {
-      email = "po@nurulfikri.ac.id";
-      name = "Rudi Hartono (PO)";
-    } else if (targetRole === "panitia") {
-      email = "panitia@nurulfikri.ac.id";
-      name = "Andi Saputra (Panitia)";
-    } else if (targetRole === "staff") {
-      email = "staff@nurulfikri.ac.id";
-      name = "Staf Kemahasiswaan";
-    }
-
-    await login(email, targetRole, name);
-    setShowProfileMenu(false);
-  };
 
   return (
     <nav className="sticky top-0 z-40 w-full bg-white border-b border-stone-200/80 shadow-xs" id="main_navigation_bar">
@@ -249,51 +237,7 @@ export default function Navbar() {
                       </span>
                     </div>
 
-                    {/* Prototyping switch panel */}
-                    <div className="px-3 py-2 border-b border-stone-100 bg-stone-50/80">
-                      <p className="text-[9px] font-extrabold uppercase text-stone-400 tracking-wider flex items-center gap-1 mb-1.5">
-                        <RefreshCw className="w-2.5 h-2.5 text-stone-500" />
-                        PROTOTYPING: Ganti Role
-                      </p>
-                      <div className="flex flex-col gap-1">
-                        <button
-                          onClick={() => handlePrototypeSwitchRole("po")}
-                          className={`text-left text-[11px] px-2 py-1 rounded-md font-semibold transition-all ${
-                            activeRole === "po" ? "bg-indigo-600 text-white" : "hover:bg-stone-200/75 text-stone-600"
-                          }`}
-                          id="swap_role_to_po"
-                        >
-                          Project Officer (PO)
-                        </button>
-                        <button
-                          onClick={() => handlePrototypeSwitchRole("panitia")}
-                          className={`text-left text-[11px] px-2 py-1 rounded-md font-semibold transition-all ${
-                            activeRole === "panitia" ? "bg-indigo-600 text-white" : "hover:bg-stone-200/75 text-stone-600"
-                          }`}
-                          id="swap_role_to_panitia"
-                        >
-                          Panitia Pelaksana
-                        </button>
-                        <button
-                          onClick={() => handlePrototypeSwitchRole("mahasiswa")}
-                          className={`text-left text-[11px] px-2 py-1 rounded-md font-semibold transition-all ${
-                            activeRole === "mahasiswa" ? "bg-indigo-600 text-white" : "hover:bg-stone-200/75 text-stone-600"
-                          }`}
-                          id="swap_role_to_mahasiswa"
-                        >
-                          Mahasiswa Peserta
-                        </button>
-                        <button
-                          onClick={() => handlePrototypeSwitchRole("staff")}
-                          className={`text-left text-[11px] px-2 py-1 rounded-md font-semibold transition-all ${
-                            activeRole === "staff" ? "bg-indigo-600 text-white" : "hover:bg-stone-200/75 text-stone-600"
-                          }`}
-                          id="swap_role_to_staff"
-                        >
-                          Staf Kemahasiswaan
-                        </button>
-                      </div>
-                    </div>
+
 
                     <button
                       onClick={logout}
