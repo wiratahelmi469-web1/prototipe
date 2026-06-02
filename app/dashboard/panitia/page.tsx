@@ -10,7 +10,7 @@ import { Calendar, CheckSquare, Layers3, Flame, ScanLine, Award, ArrowRight, Shi
 import { formatDate } from "../../../lib/utils";
 
 export default function PanitiaOverviewDashboard() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
 
   const [events, setEvents] = useState<EventItem[]>([]);
@@ -18,6 +18,7 @@ export default function PanitiaOverviewDashboard() {
   const [divisions, setDivisions] = useState<DivisionProgress[]>([]);
 
   useEffect(() => {
+    if (loading) return;
     if (!user || user.role !== "panitia") {
       router.push("/login");
       return;
@@ -46,9 +47,9 @@ export default function PanitiaOverviewDashboard() {
     setTasks(currentTasks);
 
     setDivisions(DIVISION_PROGRESS);
-  }, [user, router]);
+  }, [user, loading, router]);
 
-  if (!user) return null;
+  if (loading || !user) return null;
 
   // Compute stats
   const activeEventsCount = events.filter(e => e.status !== "Selesai" && e.status !== "Pending Approval").length;

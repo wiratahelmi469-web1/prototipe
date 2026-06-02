@@ -10,19 +10,20 @@ import TicketQRCode from "../../../../components/TicketQRCode";
 import Link from "next/link";
 
 export default function RiwayatTiketMahasiswa() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
 
   const [joinedEvents, setJoinedEvents] = useState<EventItem[]>([]);
 
   useEffect(() => {
+    if (loading) return;
     if (!user || user.role !== "mahasiswa") {
       router.push("/login");
       return;
     }
 
     // Load registered lists
-    const registeredKey = `registered_${user.email}_events`;
+    const registeredKey = `registered_${user?.email}_events`;
     const savedRegs = localStorage.getItem(registeredKey);
     let myRegsList: string[] = [];
     if (savedRegs) {
@@ -39,9 +40,9 @@ export default function RiwayatTiketMahasiswa() {
     }
 
     setJoinedEvents(currentEvents.filter((evt) => myRegsList.includes(evt.id)));
-  }, [user, router]);
+  }, [user, loading, router]);
 
-  if (!user) return null;
+  if (loading || !user) return null;
 
   return (
     <Workspace id="mahasiswa_tickets_riwayat">

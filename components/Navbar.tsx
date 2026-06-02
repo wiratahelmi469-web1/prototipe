@@ -239,6 +239,16 @@ export default function Navbar() {
 
 
 
+                    <Link
+                      href={`/dashboard/${activeRole}/profile`}
+                      onClick={() => setShowProfileMenu(false)}
+                      className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-stone-700 hover:bg-stone-50 hover:text-indigo-650 transition-colors border-b border-stone-105"
+                      id="navbar_profile_link"
+                    >
+                      <User className="w-4 h-4 text-stone-400" />
+                      Lihat Profil Saya
+                    </Link>
+
                     <button
                       onClick={logout}
                       className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 hover:text-rose-800 transition-colors text-left"

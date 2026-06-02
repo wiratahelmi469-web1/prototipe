@@ -10,7 +10,7 @@ import { BookOpen, Calendar, Award, Sparkles, MessageSquare, Send, CheckCircle, 
 import { formatDate } from "../../../lib/utils";
 
 export default function MahasiswaOverviewDashboard() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
 
   const [joinedEvents, setJoinedEvents] = useState<EventItem[]>([]);
@@ -22,6 +22,7 @@ export default function MahasiswaOverviewDashboard() {
   const [aiLoading, setAiLoading] = useState(false);
 
   useEffect(() => {
+    if (loading) return;
     if (!user || user.role !== "mahasiswa") {
       router.push("/login");
       return;
@@ -56,7 +57,7 @@ export default function MahasiswaOverviewDashboard() {
     }
     setNotifications(globalNotifs.filter(n => n.visibility.includes("mahasiswa")));
 
-  }, [user, router]);
+  }, [user, loading, router]);
 
   const askGemini = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -94,7 +95,7 @@ export default function MahasiswaOverviewDashboard() {
     }
   };
 
-  if (!user) return null;
+  if (loading || !user) return null;
 
   return (
     <Workspace id="mahasiswa_dashboard_viewport">

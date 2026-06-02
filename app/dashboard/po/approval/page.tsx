@@ -10,13 +10,14 @@ import { formatDate } from "../../../../lib/utils";
 import Toast, { ToastContainer } from "../../../../components/Toast";
 
 export default function POApprovalGate() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
 
   const [events, setEvents] = useState<EventItem[]>([]);
   const [toasts, setToasts] = useState<{ id: string; message: string; type: "success" | "error" | "info" }[]>([]);
 
   useEffect(() => {
+    if (loading) return;
     if (!user || user.role !== "po") {
       router.push("/login");
       return;
@@ -28,7 +29,7 @@ export default function POApprovalGate() {
     } else {
       setEvents(INITIAL_EVENTS);
     }
-  }, [user, router]);
+  }, [user, loading, router]);
 
   const addToast = (message: string, type: "success" | "error" | "info") => {
     const id = Math.random().toString();
@@ -80,6 +81,8 @@ export default function POApprovalGate() {
     setEvents(updated);
     addToast(`Event '${title}' ditolak dan ditarik dari daftar pengajuan.`, "info");
   };
+
+  if (loading || !user) return null;
 
   return (
     <Workspace id="po_approval_workspace">

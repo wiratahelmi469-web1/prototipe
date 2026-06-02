@@ -9,13 +9,14 @@ import { Calendar, MapPin, Users, HelpCircle } from "lucide-react";
 import { formatDate } from "../../../../lib/utils";
 
 export default function StaffEventsCalendar() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
 
   const [events, setEvents] = useState<EventItem[]>([]);
   const [filterType, setFilterType] = useState<string>("Semua");
 
   useEffect(() => {
+    if (loading) return;
     if (!user || user.role !== "staff") {
       router.push("/login");
       return;
@@ -27,11 +28,13 @@ export default function StaffEventsCalendar() {
     } else {
       setEvents(INITIAL_EVENTS);
     }
-  }, [user, router]);
+  }, [user, loading, router]);
 
   const categories = ["Semua", "Seminar", "Workshop", "Lomba", "Olahraga", "Seni", "Sosial"];
 
   const filtered = filterType === "Semua" ? events : events.filter(e => e.category === filterType);
+
+  if (loading || !user) return null;
 
   return (
     <Workspace id="staff_events_workspace">

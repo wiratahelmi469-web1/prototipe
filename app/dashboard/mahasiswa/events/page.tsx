@@ -11,7 +11,7 @@ import { formatDate } from "../../../../lib/utils";
 import Toast, { ToastContainer } from "../../../../components/Toast";
 
 export default function MahasiswaEventsManager() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
 
   const [events, setEvents] = useState<EventItem[]>([]);
@@ -19,6 +19,7 @@ export default function MahasiswaEventsManager() {
   const [toasts, setToasts] = useState<{ id: string; message: string; type: "success" | "error" | "info" }[]>([]);
 
   useEffect(() => {
+    if (loading) return;
     if (!user || user.role !== "mahasiswa") {
       router.push("/login");
       return;
@@ -42,7 +43,7 @@ export default function MahasiswaEventsManager() {
       currentEvents = INITIAL_EVENTS;
     }
     setEvents(currentEvents);
-  }, [user, router]);
+  }, [user, loading, router]);
 
   const addToast = (message: string, type: "success" | "error" | "info") => {
     const id = Math.random().toString();
@@ -104,6 +105,8 @@ export default function MahasiswaEventsManager() {
 
     addToast(`Berhasil membatalkan pendaftaran pada '${title}'.`, "info");
   };
+
+  if (loading || !user) return null;
 
   return (
     <Workspace id="student_my_events">

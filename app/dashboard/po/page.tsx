@@ -10,13 +10,14 @@ import { ShieldCheck, BarChart3, Users, Award, CalendarDays, FileCheck, ArrowRig
 import { formatDate } from "../../../lib/utils";
 
 export default function PODashboardHome() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
 
   const [events, setEvents] = useState<EventItem[]>([]);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
 
   useEffect(() => {
+    if (loading) return;
     if (!user || user.role !== "po") {
       router.push("/login");
       return;
@@ -41,9 +42,9 @@ export default function PODashboardHome() {
       globalNotifs = INITIAL_NOTIFICATIONS;
     }
     setNotifications(globalNotifs.filter(n => n.visibility.includes("po")));
-  }, [user, router]);
+  }, [user, loading, router]);
 
-  if (!user) return null;
+  if (loading || !user) return null;
 
   // Key metrics
   const pendingEventsLen = events.filter((e) => e.status === "Pending Approval").length;

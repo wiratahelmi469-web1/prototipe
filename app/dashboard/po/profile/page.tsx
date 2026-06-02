@@ -4,9 +4,10 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../../../context/AuthContext";
 import Workspace from "../../../../components/Workspace";
-import { User, Phone, FileText, Compass, Award, Calendar, RefreshCw, Save, Users, Building, TrendingUp } from "lucide-react";
+import { User, Phone, FileText, Compass, Award, Calendar, RefreshCw, Save, ShieldCheck, Hourglass } from "lucide-react";
 import Toast, { ToastContainer } from "../../../../components/Toast";
 import { INITIAL_EVENTS, EventItem } from "../../../../lib/mockData";
+import { INITIAL_CERTIFICATES, UserCertificate } from "../../../../lib/certificateData";
 
 interface ProfileData {
   name: string;
@@ -16,7 +17,7 @@ interface ProfileData {
   bio: string;
 }
 
-export default function StaffProfilePage() {
+export default function POProfilePage() {
   const { user, loading, login } = useAuth();
   const router = useRouter();
 
@@ -28,14 +29,15 @@ export default function StaffProfilePage() {
   const [bio, setBio] = useState("");
 
   // Statistics state
-  const [statsMahasiswaTerdaftar, setStatsMahasiswaTerdaftar] = useState(1);
-  const [statsEventTerpublikasi, setStatsEventTerpublikasi] = useState(0);
+  const [statsEventDisetujui, setStatsEventDisetujui] = useState(0);
+  const [statsMenungguApproval, setStatsMenungguApproval] = useState(0);
+  const [statsSertifikatDivalidasi, setStatsSertifikatDivalidasi] = useState(0);
 
   const [toasts, setToasts] = useState<{ id: string; message: string; type: "success" | "error" | "info" }[]>([]);
 
   useEffect(() => {
     if (loading) return;
-    if (!user || user.role !== "staff") {
+    if (!user || user.role !== "po") {
       router.push("/login");
       return;
     }
@@ -53,30 +55,15 @@ export default function StaffProfilePage() {
         setBio(parsed.bio || "");
       } catch (e) {
         setName(user.name || "");
-        setDivision("Unit Kegiatan Mahasiswa");
+        setDivision("Bidang Kemahasiswaan");
       }
     } else {
       setName(user.name || "");
-      setDivision("Unit Kegiatan Mahasiswa");
+      setDivision("Bidang Kemahasiswaan");
     }
 
     // Load statistics
-    // 1. Mahasiswa Terdaftar (read eventhub_registered_users)
-    const savedRegUsers = localStorage.getItem("eventhub_registered_users");
-    if (savedRegUsers) {
-      try {
-        const parsedUsers = JSON.parse(savedRegUsers);
-        if (Array.isArray(parsedUsers)) {
-          const mhsCount = parsedUsers.filter((u: any) => u.role === "mahasiswa").length;
-          setStatsMahasiswaTerdaftar(Math.max(1, mhsCount));
-        }
-      } catch (e) {}
-    } else {
-      // Default fallback
-      setStatsMahasiswaTerdaftar(3); // Demo baseline
-    }
-
-    // 2. Event Terpublikasi
+    // 1. Events disetujui & menunggu approval
     const savedEvents = localStorage.getItem("eventhub_events");
     let currentEvents: EventItem[] = [];
     if (savedEvents) {
@@ -88,8 +75,25 @@ export default function StaffProfilePage() {
     } else {
       currentEvents = INITIAL_EVENTS;
     }
-    const published = currentEvents.filter((e) => e.status !== "Pending Approval");
-    setStatsEventTerpublikasi(published.length);
+    const approved = currentEvents.filter((e) => e.status !== "Pending Approval");
+    const pending = currentEvents.filter((e) => e.status === "Pending Approval");
+    setStatsEventDisetujui(approved.length);
+    setStatsMenungguApproval(pending.length);
+
+    // 2. Sertifikat Divalidasi
+    const savedCerts = localStorage.getItem("eventhub_certs");
+    let currentCerts: UserCertificate[] = [];
+    if (savedCerts) {
+      try {
+        currentCerts = JSON.parse(savedCerts);
+      } catch (e) {
+        currentCerts = INITIAL_CERTIFICATES;
+      }
+    } else {
+      currentCerts = INITIAL_CERTIFICATES;
+    }
+    const validated = currentCerts.filter((c) => c.isApprovedByPO === true);
+    setStatsSertifikatDivalidasi(validated.length);
 
   }, [user, loading, router]);
 
@@ -144,7 +148,7 @@ export default function StaffProfilePage() {
       setName(user.name || "");
       setPhone("");
       setNip("");
-      setDivision("Unit Kegiatan Mahasiswa");
+      setDivision("Bidang Kemahasiswaan");
       setBio("");
     }
     addToast("Formulir isian di-reset ke data terakhir.", "info");
@@ -155,15 +159,15 @@ export default function StaffProfilePage() {
   const avatarInitial = name ? name.charAt(0).toUpperCase() : user.name.charAt(0).toUpperCase();
 
   return (
-    <Workspace id="staff_profile_workspace">
+    <Workspace id="po_profile_workspace">
       <ToastContainer toasts={toasts} removeToast={removeToast} />
 
-      <div className="max-w-4xl mx-auto space-y-6" id="staff_profile_refined_viewport">
+      <div className="max-w-4xl mx-auto space-y-6" id="po_profile_refined_viewport">
         {/* Header Title section */}
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-stone-900">Kelola Profil Administrasi Kampus</h2>
+          <h2 className="text-xl font-bold tracking-tight text-stone-900">Kelola Profil Project Owner (PO)</h2>
           <p className="text-xs text-stone-500 mt-1">
-            Ulas data administrasi organisasi, kontrol hak akses, serta kelola profil Staf Kemahasiswaan Anda.
+            Pantau status approval and kelola profil verifikasi tanda tangan digital resmi dewan kampus.
           </p>
         </div>
 
@@ -177,14 +181,14 @@ export default function StaffProfilePage() {
               
               {/* BAGIAN 1 - Header Avatar */}
               <div className="flex flex-col sm:flex-row items-center gap-5 pb-6 mb-6 border-b border-stone-100">
-                <div className="w-24 h-24 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center font-extrabold text-3xl uppercase shadow-inner border border-purple-200 shrink-0">
+                <div className="w-24 h-24 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-extrabold text-3xl uppercase shadow-inner border border-emerald-200 shrink-0">
                   {avatarInitial}
                 </div>
                 <div className="text-center sm:text-left space-y-1">
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                     <h3 className="font-black text-xl text-stone-900 tracking-tight">{name || user.name}</h3>
-                    <span className="text-[10px] font-black uppercase tracking-wider bg-purple-100 text-purple-700 px-3 py-0.5 rounded-full border border-purple-200 self-center font-semibold">
-                      Staff Kemahasiswaan
+                    <span className="text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-700 px-3 py-0.5 rounded-full border border-emerald-200 self-center">
+                      PO (Project Owner)
                     </span>
                   </div>
                   <p className="text-xs font-mono text-stone-500">{user.email}</p>
@@ -198,10 +202,10 @@ export default function StaffProfilePage() {
               <form onSubmit={handleSave} className="space-y-5">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="staff_profile_name" className="block text-[10px] font-black uppercase text-stone-400 tracking-wider mb-1.5">Nama Lengkap</label>
+                    <label htmlFor="po_profile_name" className="block text-[10px] font-black uppercase text-stone-400 tracking-wider mb-1.5">Nama Lengkap</label>
                     <div className="relative">
                       <input
-                        id="staff_profile_name"
+                        id="po_profile_name"
                         type="text"
                         required
                         className="w-full text-xs bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 pl-10 outline-hidden focus:border-indigo-500 focus:bg-white transition-all font-semibold text-stone-850"
@@ -213,10 +217,10 @@ export default function StaffProfilePage() {
                   </div>
 
                   <div>
-                    <label htmlFor="staff_profile_phone" className="block text-[10px] font-black uppercase text-stone-400 tracking-wider mb-1.5">Nomor HP</label>
+                    <label htmlFor="po_profile_phone" className="block text-[10px] font-black uppercase text-stone-400 tracking-wider mb-1.5">Nomor HP</label>
                     <div className="relative">
                       <input
-                        id="staff_profile_phone"
+                        id="po_profile_phone"
                         type="text"
                         placeholder="08xxxxxxxxxx"
                         className="w-full text-xs bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 pl-10 outline-hidden focus:border-indigo-500 focus:bg-white transition-all font-semibold text-stone-850"
@@ -230,12 +234,12 @@ export default function StaffProfilePage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="staff_profile_nip" className="block text-[10px] font-black uppercase text-stone-400 tracking-wider mb-1.5">Nomor Induk Staf (NIP)</label>
+                    <label htmlFor="po_profile_nip" className="block text-[10px] font-black uppercase text-stone-400 tracking-wider mb-1.5">Nomor Induk Pegawai (NIP)</label>
                     <div className="relative">
                       <input
-                        id="staff_profile_nip"
+                        id="po_profile_nip"
                         type="text"
-                        placeholder="Masukkan NIP Staf"
+                        placeholder="Masukkan NIP Resmi"
                         className="w-full text-xs bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 pl-10 outline-hidden focus:border-indigo-500 focus:bg-white transition-all font-semibold text-stone-850"
                         value={nip}
                         onChange={(e) => setNip(e.target.value)}
@@ -245,12 +249,12 @@ export default function StaffProfilePage() {
                   </div>
 
                   <div>
-                    <label htmlFor="staff_profile_faculty" className="block text-[10px] font-black uppercase text-stone-400 tracking-wider mb-1.5">Mutu / Divisi Kerja</label>
+                    <label htmlFor="po_profile_faculty" className="block text-[10px] font-black uppercase text-stone-400 tracking-wider mb-1.5">Unit Kerja / Divisi</label>
                     <div className="relative">
                       <input
-                        id="staff_profile_faculty"
+                        id="po_profile_faculty"
                         type="text"
-                        placeholder="Contoh: Unit Kegiatan Mahasiswa"
+                        placeholder="Contoh: Bidang Kemahasiswaan"
                         className="w-full text-xs bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 pl-10 outline-hidden focus:border-indigo-500 focus:bg-white transition-all font-semibold text-stone-850"
                         value={division}
                         onChange={(e) => setDivision(e.target.value)}
@@ -275,15 +279,15 @@ export default function StaffProfilePage() {
                 {/* Bio text area */}
                 <div>
                   <div className="flex justify-between items-center mb-1.5">
-                    <label htmlFor="staff_profile_bio" className="block text-[10px] font-black uppercase text-stone-400 tracking-wider">Bio / Tentang Saya</label>
+                    <label htmlFor="po_profile_bio" className="block text-[10px] font-black uppercase text-stone-400 tracking-wider">Bio / Tentang Saya</label>
                     <span className="text-[10px] text-stone-400 font-mono font-bold">
                       {Math.min(200, bio.length)}/200
                     </span>
                   </div>
                   <textarea
-                    id="staff_profile_bio"
+                    id="po_profile_bio"
                     maxLength={200}
-                    placeholder="Tulis biografi ringkas layanan administrasi Anda..."
+                    placeholder="Tulis biografi ringkas atau penugasan dekan kemahasiswaan Anda..."
                     className="w-full text-xs bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 min-h-[80px] max-h-[140px] outline-hidden focus:border-indigo-500 focus:bg-white transition-all font-semibold text-stone-850 leading-relaxed"
                     value={bio}
                     onChange={(e) => setBio(e.target.value)}
@@ -296,7 +300,7 @@ export default function StaffProfilePage() {
                     type="button"
                     onClick={handleReset}
                     className="px-5 py-3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold rounded-xl text-xs transition-colors cursor-pointer flex items-center gap-1.5"
-                    id="reset_staff_profile_btn"
+                    id="reset_po_profile_btn"
                   >
                     <RefreshCw className="w-4 h-4" />
                     Reset
@@ -304,8 +308,8 @@ export default function StaffProfilePage() {
 
                   <button
                     type="submit"
-                    className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
-                    id="save_staff_profile_btn"
+                    className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
+                    id="save_po_profile_btn"
                   >
                     <Save className="w-4 h-4" />
                     Simpan Perubahan
@@ -317,35 +321,35 @@ export default function StaffProfilePage() {
 
           {/* BAGIAN 3 - Statistik Ringkas (cards) as sidebar column */}
           <div className="space-y-4">
-            <h4 className="text-[10px] font-black uppercase text-stone-400 tracking-wider">MONITORING KAMPUS</h4>
+            <h4 className="text-[10px] font-black uppercase text-stone-400 tracking-wider">PENILAIAN &amp; KINERJA</h4>
 
             <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-xs flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center border border-purple-100 shrink-0">
-                <Users className="w-5 h-5" />
+              <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100 shrink-0">
+                <ShieldCheck className="w-5 h-5" />
               </div>
               <div className="space-y-0.5">
-                <span className="text-[10px] uppercase font-bold text-stone-400 tracking-wide block">Mahasiswa Terdaftar</span>
-                <span className="text-lg font-black text-stone-900 font-mono block leading-none">{statsMahasiswaTerdaftar}</span>
+                <span className="text-[10px] uppercase font-bold text-stone-400 tracking-wide block">Event Disetujui</span>
+                <span className="text-lg font-black text-stone-900 font-mono block leading-none">{statsEventDisetujui}</span>
+              </div>
+            </div>
+
+            <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-xs flex items-center gap-4">
+              <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-100 shrink-0">
+                <Hourglass className="w-5 h-5" />
+              </div>
+              <div className="space-y-0.5">
+                <span className="text-[10px] uppercase font-bold text-stone-400 tracking-wide block">Menunggu Approval</span>
+                <span className="text-lg font-black text-stone-900 font-mono block leading-none">{statsMenungguApproval}</span>
               </div>
             </div>
 
             <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-xs flex items-center gap-4">
               <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100 shrink-0">
-                <Calendar className="w-5 h-5" />
+                <Award className="w-5 h-5" />
               </div>
               <div className="space-y-0.5">
-                <span className="text-[10px] uppercase font-bold text-stone-400 tracking-wide block">Event Terpublikasi</span>
-                <span className="text-lg font-black text-stone-900 font-mono block leading-none">{statsEventTerpublikasi}</span>
-              </div>
-            </div>
-
-            <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-xs flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100 shrink-0">
-                <TrendingUp className="w-5 h-5" />
-              </div>
-              <div className="space-y-0.5">
-                <span className="text-[10px] uppercase font-bold text-stone-400 tracking-wide block">Akumulasi SKKM</span>
-                <span className="text-lg font-black text-stone-900 font-mono block leading-none">18 SKKM</span>
+                <span className="text-[10px] uppercase font-bold text-stone-400 tracking-wide block">Sertifikat Divalidasi</span>
+                <span className="text-lg font-black text-stone-900 font-mono block leading-none">{statsSertifikatDivalidasi}</span>
               </div>
             </div>
           </div>

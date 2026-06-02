@@ -10,12 +10,13 @@ import { Landmark, Users, CalendarCheck, Award, TrendingUp, HelpCircle, ArrowRig
 import { formatDate } from "../../../lib/utils";
 
 export default function StaffDashboardHome() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
 
   const [events, setEvents] = useState<EventItem[]>([]);
 
   useEffect(() => {
+    if (loading) return;
     if (!user || user.role !== "staff") {
       router.push("/login");
       return;
@@ -27,9 +28,9 @@ export default function StaffDashboardHome() {
     } else {
       setEvents(INITIAL_EVENTS);
     }
-  }, [user, router]);
+  }, [user, loading, router]);
 
-  if (!user) return null;
+  if (loading || !user) return null;
 
   // Global aggregate stats
   const totalRegistrants = events.reduce((acc, evt) => acc + evt.pesertaCount, 0);

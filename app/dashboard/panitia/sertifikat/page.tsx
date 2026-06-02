@@ -12,7 +12,7 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
 export default function CertificateGeneratorPage() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
 
   const certificateRef = useRef<HTMLDivElement>(null);
@@ -25,6 +25,7 @@ export default function CertificateGeneratorPage() {
   const [toasts, setToasts] = useState<{ id: string; message: string; type: "success" | "error" | "info" }[]>([]);
 
   useEffect(() => {
+    if (loading) return;
     if (!user || user.role !== "panitia") {
       router.push("/login");
       return;
@@ -38,7 +39,7 @@ export default function CertificateGeneratorPage() {
       localStorage.setItem("eventhub_certs", JSON.stringify(INITIAL_CERTIFICATES));
       setCerts(INITIAL_CERTIFICATES);
     }
-  }, [user, router]);
+  }, [user, loading, router]);
 
   const addToast = (message: string, type: "success" | "error" | "info") => {
     const id = Math.random().toString();
@@ -98,7 +99,7 @@ export default function CertificateGeneratorPage() {
     }
   };
 
-  if (!user) return null;
+  if (loading || !user) return null;
 
   return (
     <Workspace id="panitia_sertifikat_workspace">

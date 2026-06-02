@@ -11,7 +11,7 @@ import { formatDate } from "../../../../lib/utils";
 import Toast, { ToastContainer } from "../../../../components/Toast";
 
 export default function PanitiaEventsManagement() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
 
   // Core syncing states
@@ -48,6 +48,7 @@ export default function PanitiaEventsManagement() {
   const [evtDesc, setEvtDesc] = useState("");
 
   useEffect(() => {
+    if (loading) return;
     if (!user || user.role !== "panitia") {
       router.push("/login");
       return;
@@ -97,7 +98,7 @@ export default function PanitiaEventsManagement() {
     }
     setChats(currentChats);
 
-  }, [user, router]);
+  }, [user, loading, router]);
 
   const addToast = (message: string, type: "success" | "error" | "info") => {
     const id = Math.random().toString();
@@ -301,6 +302,8 @@ export default function PanitiaEventsManagement() {
       setAiGenerating(false);
     }
   };
+
+  if (loading || !user) return null;
 
   return (
     <Workspace id="panitia_events_manager_workspace">

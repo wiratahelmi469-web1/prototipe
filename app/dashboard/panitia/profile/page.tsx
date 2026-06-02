@@ -4,9 +4,9 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../../../context/AuthContext";
 import Workspace from "../../../../components/Workspace";
-import { User, Phone, FileText, Compass, Award, Calendar, RefreshCw, Save, Users, Building, TrendingUp } from "lucide-react";
+import { User, Phone, FileText, Compass, Award, Calendar, RefreshCw, Save, CheckSquare } from "lucide-react";
 import Toast, { ToastContainer } from "../../../../components/Toast";
-import { INITIAL_EVENTS, EventItem } from "../../../../lib/mockData";
+import { INITIAL_EVENTS, INITIAL_TASKS, EventItem, TaskItem } from "../../../../lib/mockData";
 
 interface ProfileData {
   name: string;
@@ -16,7 +16,7 @@ interface ProfileData {
   bio: string;
 }
 
-export default function StaffProfilePage() {
+export default function PanitiaProfilePage() {
   const { user, loading, login } = useAuth();
   const router = useRouter();
 
@@ -28,14 +28,15 @@ export default function StaffProfilePage() {
   const [bio, setBio] = useState("");
 
   // Statistics state
-  const [statsMahasiswaTerdaftar, setStatsMahasiswaTerdaftar] = useState(1);
-  const [statsEventTerpublikasi, setStatsEventTerpublikasi] = useState(0);
+  const [statsEventAktif, setStatsEventAktif] = useState(0);
+  const [statsTugasSelesai, setStatsTugasSelesai] = useState(0);
+  const [statsTotalPeserta, setStatsTotalPeserta] = useState(0);
 
   const [toasts, setToasts] = useState<{ id: string; message: string; type: "success" | "error" | "info" }[]>([]);
 
   useEffect(() => {
     if (loading) return;
-    if (!user || user.role !== "staff") {
+    if (!user || user.role !== "panitia") {
       router.push("/login");
       return;
     }
@@ -53,30 +54,15 @@ export default function StaffProfilePage() {
         setBio(parsed.bio || "");
       } catch (e) {
         setName(user.name || "");
-        setDivision("Unit Kegiatan Mahasiswa");
+        setDivision("Divisi Acara");
       }
     } else {
       setName(user.name || "");
-      setDivision("Unit Kegiatan Mahasiswa");
+      setDivision("Divisi Acara");
     }
 
     // Load statistics
-    // 1. Mahasiswa Terdaftar (read eventhub_registered_users)
-    const savedRegUsers = localStorage.getItem("eventhub_registered_users");
-    if (savedRegUsers) {
-      try {
-        const parsedUsers = JSON.parse(savedRegUsers);
-        if (Array.isArray(parsedUsers)) {
-          const mhsCount = parsedUsers.filter((u: any) => u.role === "mahasiswa").length;
-          setStatsMahasiswaTerdaftar(Math.max(1, mhsCount));
-        }
-      } catch (e) {}
-    } else {
-      // Default fallback
-      setStatsMahasiswaTerdaftar(3); // Demo baseline
-    }
-
-    // 2. Event Terpublikasi
+    // 1. Event Aktif
     const savedEvents = localStorage.getItem("eventhub_events");
     let currentEvents: EventItem[] = [];
     if (savedEvents) {
@@ -88,8 +74,29 @@ export default function StaffProfilePage() {
     } else {
       currentEvents = INITIAL_EVENTS;
     }
-    const published = currentEvents.filter((e) => e.status !== "Pending Approval");
-    setStatsEventTerpublikasi(published.length);
+    const activeEvts = currentEvents.filter(
+      (e) => e.status !== "Selesai" && e.status !== "Pending Approval"
+    );
+    setStatsEventAktif(activeEvts.length);
+
+    // 2. Tugas Selesai
+    const savedTasks = localStorage.getItem("eventhub_tasks");
+    let currentTasks: TaskItem[] = [];
+    if (savedTasks) {
+      try {
+        currentTasks = JSON.parse(savedTasks);
+      } catch (e) {
+        currentTasks = INITIAL_TASKS;
+      }
+    } else {
+      currentTasks = INITIAL_TASKS;
+    }
+    const completedTasks = currentTasks.filter((t) => t.status === "done");
+    setStatsTugasSelesai(completedTasks.length);
+
+    // 3. Total Peserta
+    const totalP = currentEvents.reduce((acc, curr) => acc + (curr.pesertaCount || 0), 0);
+    setStatsTotalPeserta(totalP);
 
   }, [user, loading, router]);
 
@@ -144,7 +151,7 @@ export default function StaffProfilePage() {
       setName(user.name || "");
       setPhone("");
       setNip("");
-      setDivision("Unit Kegiatan Mahasiswa");
+      setDivision("Divisi Acara");
       setBio("");
     }
     addToast("Formulir isian di-reset ke data terakhir.", "info");
@@ -155,15 +162,15 @@ export default function StaffProfilePage() {
   const avatarInitial = name ? name.charAt(0).toUpperCase() : user.name.charAt(0).toUpperCase();
 
   return (
-    <Workspace id="staff_profile_workspace">
+    <Workspace id="panitia_profile_workspace">
       <ToastContainer toasts={toasts} removeToast={removeToast} />
 
-      <div className="max-w-4xl mx-auto space-y-6" id="staff_profile_refined_viewport">
+      <div className="max-w-4xl mx-auto space-y-6" id="panitia_profile_refined_viewport">
         {/* Header Title section */}
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-stone-900">Kelola Profil Administrasi Kampus</h2>
+          <h2 className="text-xl font-bold tracking-tight text-stone-900">Kelola Profil Panitia</h2>
           <p className="text-xs text-stone-500 mt-1">
-            Ulas data administrasi organisasi, kontrol hak akses, serta kelola profil Staf Kemahasiswaan Anda.
+            Pantau performa penugasan kepanitiaan Anda dan lengkapi identitas kepengurusan organisasi.
           </p>
         </div>
 
@@ -177,14 +184,14 @@ export default function StaffProfilePage() {
               
               {/* BAGIAN 1 - Header Avatar */}
               <div className="flex flex-col sm:flex-row items-center gap-5 pb-6 mb-6 border-b border-stone-100">
-                <div className="w-24 h-24 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center font-extrabold text-3xl uppercase shadow-inner border border-purple-200 shrink-0">
+                <div className="w-24 h-24 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-extrabold text-3xl uppercase shadow-inner border border-blue-200 shrink-0">
                   {avatarInitial}
                 </div>
                 <div className="text-center sm:text-left space-y-1">
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                     <h3 className="font-black text-xl text-stone-900 tracking-tight">{name || user.name}</h3>
-                    <span className="text-[10px] font-black uppercase tracking-wider bg-purple-100 text-purple-700 px-3 py-0.5 rounded-full border border-purple-200 self-center font-semibold">
-                      Staff Kemahasiswaan
+                    <span className="text-[10px] font-black uppercase tracking-wider bg-blue-100 text-blue-700 px-3 py-0.5 rounded-full border border-blue-200 self-center">
+                      {user.role}
                     </span>
                   </div>
                   <p className="text-xs font-mono text-stone-500">{user.email}</p>
@@ -198,10 +205,10 @@ export default function StaffProfilePage() {
               <form onSubmit={handleSave} className="space-y-5">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="staff_profile_name" className="block text-[10px] font-black uppercase text-stone-400 tracking-wider mb-1.5">Nama Lengkap</label>
+                    <label htmlFor="panitia_profile_name" className="block text-[10px] font-black uppercase text-stone-400 tracking-wider mb-1.5">Nama Lengkap</label>
                     <div className="relative">
                       <input
-                        id="staff_profile_name"
+                        id="panitia_profile_name"
                         type="text"
                         required
                         className="w-full text-xs bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 pl-10 outline-hidden focus:border-indigo-500 focus:bg-white transition-all font-semibold text-stone-850"
@@ -213,10 +220,10 @@ export default function StaffProfilePage() {
                   </div>
 
                   <div>
-                    <label htmlFor="staff_profile_phone" className="block text-[10px] font-black uppercase text-stone-400 tracking-wider mb-1.5">Nomor HP</label>
+                    <label htmlFor="panitia_profile_phone" className="block text-[10px] font-black uppercase text-stone-400 tracking-wider mb-1.5">Nomor HP</label>
                     <div className="relative">
                       <input
-                        id="staff_profile_phone"
+                        id="panitia_profile_phone"
                         type="text"
                         placeholder="08xxxxxxxxxx"
                         className="w-full text-xs bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 pl-10 outline-hidden focus:border-indigo-500 focus:bg-white transition-all font-semibold text-stone-850"
@@ -230,12 +237,12 @@ export default function StaffProfilePage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="staff_profile_nip" className="block text-[10px] font-black uppercase text-stone-400 tracking-wider mb-1.5">Nomor Induk Staf (NIP)</label>
+                    <label htmlFor="panitia_profile_nip" className="block text-[10px] font-black uppercase text-stone-400 tracking-wider mb-1.5">Nomor Induk Pegawai / Panitia (NIP)</label>
                     <div className="relative">
                       <input
-                        id="staff_profile_nip"
+                        id="panitia_profile_nip"
                         type="text"
-                        placeholder="Masukkan NIP Staf"
+                        placeholder="NIP Kepanitiaan"
                         className="w-full text-xs bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 pl-10 outline-hidden focus:border-indigo-500 focus:bg-white transition-all font-semibold text-stone-850"
                         value={nip}
                         onChange={(e) => setNip(e.target.value)}
@@ -245,12 +252,12 @@ export default function StaffProfilePage() {
                   </div>
 
                   <div>
-                    <label htmlFor="staff_profile_faculty" className="block text-[10px] font-black uppercase text-stone-400 tracking-wider mb-1.5">Mutu / Divisi Kerja</label>
+                    <label htmlFor="panitia_profile_div" className="block text-[10px] font-black uppercase text-stone-400 tracking-wider mb-1.5">Fakultas / Divisi Kerja</label>
                     <div className="relative">
                       <input
-                        id="staff_profile_faculty"
+                        id="panitia_profile_div"
                         type="text"
-                        placeholder="Contoh: Unit Kegiatan Mahasiswa"
+                        placeholder="Contoh: Divisi Acara"
                         className="w-full text-xs bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 pl-10 outline-hidden focus:border-indigo-500 focus:bg-white transition-all font-semibold text-stone-850"
                         value={division}
                         onChange={(e) => setDivision(e.target.value)}
@@ -275,15 +282,15 @@ export default function StaffProfilePage() {
                 {/* Bio text area */}
                 <div>
                   <div className="flex justify-between items-center mb-1.5">
-                    <label htmlFor="staff_profile_bio" className="block text-[10px] font-black uppercase text-stone-400 tracking-wider">Bio / Tentang Saya</label>
+                    <label htmlFor="panitia_profile_bio" className="block text-[10px] font-black uppercase text-stone-400 tracking-wider">Bio / Tentang Saya</label>
                     <span className="text-[10px] text-stone-400 font-mono font-bold">
                       {Math.min(200, bio.length)}/200
                     </span>
                   </div>
                   <textarea
-                    id="staff_profile_bio"
+                    id="panitia_profile_bio"
                     maxLength={200}
-                    placeholder="Tulis biografi ringkas layanan administrasi Anda..."
+                    placeholder="Tulis keahlian organisasi atau deskripsi ringkas diri Anda..."
                     className="w-full text-xs bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 min-h-[80px] max-h-[140px] outline-hidden focus:border-indigo-500 focus:bg-white transition-all font-semibold text-stone-850 leading-relaxed"
                     value={bio}
                     onChange={(e) => setBio(e.target.value)}
@@ -296,7 +303,7 @@ export default function StaffProfilePage() {
                     type="button"
                     onClick={handleReset}
                     className="px-5 py-3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold rounded-xl text-xs transition-colors cursor-pointer flex items-center gap-1.5"
-                    id="reset_staff_profile_btn"
+                    id="reset_panitia_profile_btn"
                   >
                     <RefreshCw className="w-4 h-4" />
                     Reset
@@ -304,8 +311,8 @@ export default function StaffProfilePage() {
 
                   <button
                     type="submit"
-                    className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
-                    id="save_staff_profile_btn"
+                    className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
+                    id="save_panitia_profile_btn"
                   >
                     <Save className="w-4 h-4" />
                     Simpan Perubahan
@@ -317,35 +324,35 @@ export default function StaffProfilePage() {
 
           {/* BAGIAN 3 - Statistik Ringkas (cards) as sidebar column */}
           <div className="space-y-4">
-            <h4 className="text-[10px] font-black uppercase text-stone-400 tracking-wider">MONITORING KAMPUS</h4>
+            <h4 className="text-[10px] font-black uppercase text-stone-400 tracking-wider">PRESTASI KEPANITIAAN</h4>
 
             <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-xs flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center border border-purple-100 shrink-0">
-                <Users className="w-5 h-5" />
-              </div>
-              <div className="space-y-0.5">
-                <span className="text-[10px] uppercase font-bold text-stone-400 tracking-wide block">Mahasiswa Terdaftar</span>
-                <span className="text-lg font-black text-stone-900 font-mono block leading-none">{statsMahasiswaTerdaftar}</span>
-              </div>
-            </div>
-
-            <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-xs flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100 shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100 shrink-0">
                 <Calendar className="w-5 h-5" />
               </div>
               <div className="space-y-0.5">
-                <span className="text-[10px] uppercase font-bold text-stone-400 tracking-wide block">Event Terpublikasi</span>
-                <span className="text-lg font-black text-stone-900 font-mono block leading-none">{statsEventTerpublikasi}</span>
+                <span className="text-[10px] uppercase font-bold text-stone-400 tracking-wide block">Event Aktif</span>
+                <span className="text-lg font-black text-stone-900 font-mono block leading-none">{statsEventAktif}</span>
               </div>
             </div>
 
             <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-xs flex items-center gap-4">
               <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100 shrink-0">
-                <TrendingUp className="w-5 h-5" />
+                <CheckSquare className="w-5 h-5" />
               </div>
               <div className="space-y-0.5">
-                <span className="text-[10px] uppercase font-bold text-stone-400 tracking-wide block">Akumulasi SKKM</span>
-                <span className="text-lg font-black text-stone-900 font-mono block leading-none">18 SKKM</span>
+                <span className="text-[10px] uppercase font-bold text-stone-400 tracking-wide block">Tugas Selesai</span>
+                <span className="text-lg font-black text-stone-900 font-mono block leading-none">{statsTugasSelesai}</span>
+              </div>
+            </div>
+
+            <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-xs flex items-center gap-4">
+              <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-100 shrink-0">
+                <Compass className="w-5 h-5" />
+              </div>
+              <div className="space-y-0.5">
+                <span className="text-[10px] uppercase font-bold text-stone-400 tracking-wide block">Total Peserta Dipandu</span>
+                <span className="text-lg font-black text-stone-900 font-mono block leading-none">{statsTotalPeserta}</span>
               </div>
             </div>
           </div>

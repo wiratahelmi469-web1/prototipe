@@ -9,12 +9,13 @@ import { Eye, Calendar, MapPin, Users, Settings } from "lucide-react";
 import { formatDate } from "../../../../lib/utils";
 
 export default function POSupervisedEvents() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
 
   const [events, setEvents] = useState<EventItem[]>([]);
 
   useEffect(() => {
+    if (loading) return;
     if (!user || user.role !== "po") {
       router.push("/login");
       return;
@@ -26,7 +27,9 @@ export default function POSupervisedEvents() {
     } else {
       setEvents(INITIAL_EVENTS);
     }
-  }, [user, router]);
+  }, [user, loading, router]);
+
+  if (loading || !user) return null;
 
   return (
     <Workspace id="po_supervised_events_workspace">
