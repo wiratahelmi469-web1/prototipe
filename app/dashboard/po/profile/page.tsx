@@ -193,7 +193,7 @@ export default function POProfilePage() {
                   </div>
                   <p className="text-xs font-mono text-stone-500">{user.email}</p>
                   <p className="text-xs font-mono font-bold text-stone-400">
-                    NIP: {nip || "—"}
+                    NIM: {nip || "—"}
                   </p>
                 </div>
               </div>
@@ -234,12 +234,12 @@ export default function POProfilePage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="po_profile_nip" className="block text-[10px] font-black uppercase text-stone-400 tracking-wider mb-1.5">Nomor Induk Pegawai (NIP)</label>
+                    <label htmlFor="po_profile_nim" className="block text-[10px] font-black uppercase text-stone-400 tracking-wider mb-1.5">Nomor Induk Mahasiswa (NIM)</label>
                     <div className="relative">
                       <input
-                        id="po_profile_nip"
+                        id="po_profile_nim"
                         type="text"
-                        placeholder="Masukkan NIP Resmi"
+                        placeholder="Masukkan NIM Mahasiswa"
                         className="w-full text-xs bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 pl-10 outline-hidden focus:border-indigo-500 focus:bg-white transition-all font-semibold text-stone-850"
                         value={nip}
                         onChange={(e) => setNip(e.target.value)}
