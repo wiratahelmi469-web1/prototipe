@@ -63,7 +63,13 @@ export default function Navbar() {
     { name: "Event Publik", href: "/events", roles: ["guest", "mahasiswa", "panitia", "po", "staff"] },
     { name: "Dashboard", href: activeRole === "staff" ? "/dashboard/staff" : `/dashboard/${activeRole}`, roles: ["mahasiswa", "panitia", "po", "staff"] },
     { name: "Scan QR", href: "/dashboard/panitia/scan", roles: ["panitia"] },
-    { name: "Sertifikat", href: "/dashboard/panitia/sertifikat", roles: ["panitia", "po"] },
+    {
+      name: "Sertifikat",
+      href: activeRole === "po"
+        ? "/dashboard/po/sertifikat"
+        : "/dashboard/panitia/sertifikat",
+      roles: ["panitia", "po"]
+    },
     {
       name: "💬 Chat",
       href: activeRole === "staff"
