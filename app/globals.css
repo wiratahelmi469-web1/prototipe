@@ -1,4 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Sans:wght@400;500&display=swap');
 @import "tailwindcss";
+
+@theme {
+  --color-navy: #0F1E3C;
+  --color-navy-mid: #1A3362;
+  --color-navy-light: #2A4A8A;
+  --color-navy-tint: #E8EEF8;
+
+  --color-gold: #F5A623;
+  --color-gold-dark: #E8921A;
+  --color-gold-tint: #FFF3DC;
+
+  --color-white: #FFFFFF;
+  --color-off-white: #F7F8FA;
+  --color-gray-muted: #8A99B3;
+  --color-gray-dark: #3D4E6C;
+
+  --color-info: #0EA5E9;
+  --color-success: #22C55E;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
+
+  --font-heading: 'Plus Jakarta Sans', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+}
 
 @layer utilities {
   /* Minimal scrollbar helper */
@@ -30,3 +55,4 @@
 .animate-progress-bar {
   animation: loading-progress 2.5s cubic-bezier(0.1, 0.85, 0.25, 1) forwards;
 }
+
