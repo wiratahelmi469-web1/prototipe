@@ -130,6 +130,7 @@ export default function EventDetailPage({ params }: PageProps) {
 
   // Check if participant registered
   const isJoined = user?.isLoggedIn && (() => {
+    if (typeof window === "undefined") return false;
     const regs = localStorage.getItem(`registered_${user.email}_events`);
     if (regs) {
       try { return (JSON.parse(regs) as string[]).includes(evt.id); } catch(e) { return false; }

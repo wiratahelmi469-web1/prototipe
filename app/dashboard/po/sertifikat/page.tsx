@@ -10,15 +10,43 @@ import { formatDate } from "../../../../lib/utils";
 import Toast, { ToastContainer } from "../../../../components/Toast";
 
 export default function POAuditCertificates() {
-  const { user, loading } = useAuth();
+  const { user: contextUser, loading } = useAuth();
   const router = useRouter();
 
+  const [user, setUser] = useState<any>(null);
   const [certs, setCerts] = useState<UserCertificate[]>([]);
   const [toasts, setToasts] = useState<{ id: string; message: string; type: "success" | "error" | "info" }[]>([]);
 
   useEffect(() => {
+    if (contextUser) {
+      setUser(contextUser);
+    } else if (typeof window !== "undefined") {
+      const savedAuth = localStorage.getItem("eventhub_auth");
+      if (savedAuth) {
+        try {
+          const parsed = JSON.parse(savedAuth);
+          if (parsed && parsed.role === "po") {
+            setUser(parsed);
+          }
+        } catch (e) {}
+      }
+    }
+  }, [contextUser]);
+
+  useEffect(() => {
     if (loading) return;
-    if (!user || user.role !== "po") {
+
+    let activeUser = user;
+    if (!activeUser && typeof window !== "undefined") {
+      const savedAuth = localStorage.getItem("eventhub_auth");
+      if (savedAuth) {
+        try {
+          activeUser = JSON.parse(savedAuth);
+        } catch (e) {}
+      }
+    }
+
+    if (!activeUser || activeUser.role !== "po") {
       router.push("/login");
       return;
     }
@@ -55,7 +83,7 @@ export default function POAuditCertificates() {
 
   const pendingCerts = certs.filter((c) => !c.isApprovedByPO);
 
-  if (loading || !user) return null;
+  if (loading) return null;
 
   return (
     <Workspace id="po_audit_certificates_workspace">
