@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef, useMemo } from "react";
-import { Lock, Hash, Send } from "lucide-react";
+import { Lock, Hash, Send, ChevronLeft } from "lucide-react";
 import { UserSessionData } from "../context/AuthContext";
 
 interface ChatKoordinasiProps {
@@ -70,7 +70,13 @@ export default function ChatKoordinasi({ user }: ChatKoordinasiProps) {
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [activeChannelId, setActiveChannelId] = useState("umum");
   const [inputValue, setInputValue] = useState("");
+  const [mobileView, setMobileView] = useState<"channels" | "chat">("channels");
   const bottomRef = useRef<HTMLDivElement | null>(null);
+
+  const handleChannelClick = (channelId: string) => {
+    setActiveChannelId(channelId);
+    setMobileView("chat");
+  };
 
   // Sync with localStorage
   useEffect(() => {
@@ -129,12 +135,20 @@ export default function ChatKoordinasi({ user }: ChatKoordinasiProps) {
   };
 
   return (
-    <div className="flex border border-stone-200 rounded-2xl overflow-hidden bg-white shadow-sm h-[600px]" id="chat_koordinasi_container">
+    <div className="flex border border-stone-200 rounded-2xl overflow-hidden bg-white shadow-xs h-[520px] sm:h-[580px] md:h-[620px] transition-all" id="chat_koordinasi_container">
       {/* Sidebar List */}
-      <div className="w-52 bg-stone-900 text-stone-200 flex flex-col justify-between shrink-0" id="chat_sidebar">
+      <div 
+        className={`${
+          mobileView === "channels" ? "flex" : "hidden"
+        } md:flex w-full md:w-56 bg-stone-900 text-stone-200 flex-col justify-between shrink-0 border-r border-stone-800`} 
+        id="chat_sidebar"
+      >
         <div className="flex-1 flex flex-col min-h-0">
-          <div className="p-4 border-b border-stone-850">
-            <h3 className="text-[10px] font-black uppercase text-stone-450 tracking-wider font-mono">SALURAN CHAT</h3>
+          <div className="p-4 border-b border-stone-800 flex items-center justify-between">
+            <h3 className="text-[10px] font-black uppercase text-stone-400 tracking-wider font-mono">SALURAN CHAT</h3>
+            <span className="md:hidden text-[9px] bg-stone-800 text-stone-400 px-1.5 py-0.5 rounded font-mono font-bold">
+              Kanal
+            </span>
           </div>
           
           <div className="flex-1 overflow-y-auto p-2.5 space-y-1" id="channels_list">
@@ -144,10 +158,10 @@ export default function ChatKoordinasi({ user }: ChatKoordinasiProps) {
               return (
                 <button
                   key={ch.id}
-                  onClick={() => setActiveChannelId(ch.id)}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all text-left ${
+                  onClick={() => handleChannelClick(ch.id)}
+                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all text-left cursor-pointer ${
                     isActive
-                      ? "bg-indigo-600 text-white"
+                      ? "bg-indigo-600 text-white shadow-xs"
                       : "hover:bg-stone-800/70 text-stone-300"
                   }`}
                 >
@@ -164,22 +178,58 @@ export default function ChatKoordinasi({ user }: ChatKoordinasiProps) {
             })}
           </div>
         </div>
+
+        {/* User Info Footing inside Sidebar */}
+        <div className="p-4 border-t border-stone-800 bg-stone-950/40 shrink-0" id="chat_sidebar_user_footer">
+          <div className="flex flex-col gap-1">
+            <div className="text-[11px] font-bold text-stone-100 truncate">{user.name}</div>
+            <div className="text-[9px] text-stone-500 font-mono truncate">{user.email}</div>
+            <div className="mt-1">
+              <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-stone-800 border border-stone-700 text-indigo-400 font-bold uppercase tracking-wider">
+                {user.role}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Main Conversation Stream */}
-      <div className="flex-1 flex flex-col bg-stone-50" id="chat_main_area">
+      <div 
+        className={`${
+          mobileView === "chat" ? "flex" : "hidden"
+        } md:flex flex-1 flex-col bg-stone-50`} 
+        id="chat_main_area"
+      >
         {/* Header bar */}
         <div className="p-4 bg-white border-b border-stone-200 flex items-center justify-between shrink-0">
-          <div>
-            <h4 className="text-sm font-black text-stone-900 flex items-center gap-1.5">
-              <Hash className="w-4 h-4 text-stone-400" />
-              {activeChannel?.name}
-            </h4>
-            <p className="text-[11px] text-stone-400 mt-0.5">
-              {activeChannel?.id === "pengumuman"
-                ? "Informasi penting satu arah untuk seluruh mahasiswa dan kepanitiaan."
-                : `Saluran koordinasi bagi tim: ${activeChannel?.allowedRoles.join(", ")}`}
-            </p>
+          <div className="flex items-center gap-3 w-full">
+            {/* Back to Channels list on mobile */}
+            <button
+              onClick={() => setMobileView("channels")}
+              className="md:hidden p-1.5 hover:bg-stone-100 rounded-xl text-stone-500 transition-colors flex items-center justify-center cursor-pointer shrink-0"
+              aria-label="Kembali ke saluran"
+            >
+              <ChevronLeft className="w-5 h-5 text-stone-600" />
+            </button>
+            
+            <div className="min-w-0 flex-1">
+              <h4 className="text-sm font-black text-stone-900 flex items-center gap-1.5 truncate">
+                <Hash className="w-4 h-4 text-stone-400 shrink-0" />
+                <span className="truncate">{activeChannel?.name}</span>
+              </h4>
+              <p className="text-[11px] text-stone-400 mt-0.5 leading-tight truncate">
+                {activeChannel?.id === "pengumuman"
+                  ? "Informasi penting satu arah untuk seluruh mahasiswa dan kepanitiaan."
+                  : `Saluran koordinasi bagi tim: ${activeChannel?.allowedRoles.join(", ")}`}
+              </p>
+            </div>
+
+            {/* Mobile View Channel List Info Badge */}
+            <div className="hidden sm:block md:hidden shrink-0">
+              <span className="text-[10px] bg-stone-100 border border-stone-200 text-stone-600 px-2 py-0.5 rounded-lg font-bold font-mono">
+                #{activeChannelId}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -195,13 +245,13 @@ export default function ChatKoordinasi({ user }: ChatKoordinasiProps) {
               
               let badgeBg = "bg-stone-100 text-stone-600 border-stone-200";
               if (msg.senderRole === "po") badgeBg = "bg-emerald-50 text-emerald-700 border-emerald-100";
-              else if (msg.senderRole === "panitia") badgeBg = "bg-blue-50 text-blue-700 border-blue-100";
-              else if (msg.senderRole === "staff") badgeBg = "bg-purple-50 text-purple-700 border-purple-100";
+              else if (msg.senderRole === "panitia") badgeBg = "bg-blue-50 text-blue-700 border-blue-105";
+              else if (msg.senderRole === "staff") badgeBg = "bg-purple-50 text-purple-700 border-purple-101";
 
               return (
                 <div
                   key={msg.id}
-                  className={`flex flex-col max-w-[80%] ${isSelf ? "ml-auto items-end" : "mr-auto items-start"}`}
+                  className={`flex flex-col max-w-[85%] sm:max-w-[80%] ${isSelf ? "ml-auto items-end" : "mr-auto items-start"}`}
                   id={`chat_msg_${msg.id}`}
                 >
                   {/* Sender Details */}
@@ -247,7 +297,7 @@ export default function ChatKoordinasi({ user }: ChatKoordinasiProps) {
               <input
                 type="text"
                 placeholder={`Tulis pesan ke #${activeChannel?.name}...`}
-                className="flex-1 bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-xs font-semibold outline-hidden focus:border-indigo-500 focus:bg-white transition-all text-stone-800"
+                className="flex-1 bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-sm font-semibold outline-hidden focus:border-indigo-500 focus:bg-white transition-all text-stone-800 placeholder-stone-400"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={(e) => {
