@@ -73,16 +73,27 @@ export default function PublicEventsPage() {
   // Load events from LocalStorage
   useEffect(() => {
     const savedEvents = localStorage.getItem("eventhub_events");
+    let loadedEvents = INITIAL_EVENTS;
     if (savedEvents) {
       try {
-        setEvents(JSON.parse(savedEvents));
+        loadedEvents = JSON.parse(savedEvents);
       } catch (e) {
-        setEvents(INITIAL_EVENTS);
+        loadedEvents = INITIAL_EVENTS;
       }
     } else {
-      localStorage.setItem("eventhub_events", JSON.stringify(INITIAL_EVENTS));
-      setEvents(INITIAL_EVENTS);
+      loadedEvents = INITIAL_EVENTS;
     }
+
+    // Ensure Badminton status is sync'd to Buka Pendaftaran
+    const mapped = loadedEvents.map(evt => {
+      if (evt.id === "evt-04" && evt.status === "Tutup") {
+        return { ...evt, status: "Buka Pendaftaran" as const };
+      }
+      return evt;
+    });
+
+    localStorage.setItem("eventhub_events", JSON.stringify(mapped));
+    setEvents(mapped);
   }, []);
 
   // Sync logged in user data to registration form

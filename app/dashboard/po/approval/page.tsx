@@ -127,7 +127,7 @@ export default function POApprovalGate() {
                       className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1 shadow-xs"
                       id={`approve_btn_${evt.id}`}
                     >
-                      Tolak &amp; Approve
+                      Setujui / Approve
                     </button>
                   </div>
                 </div>

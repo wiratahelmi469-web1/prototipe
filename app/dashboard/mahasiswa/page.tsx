@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "../../../context/AuthContext";
 import Workspace from "../../../components/Workspace";
 import { INITIAL_EVENTS, INITIAL_NOTIFICATIONS, EventItem, NotificationItem } from "../../../lib/mockData";
+import { INITIAL_CERTIFICATES, UserCertificate } from "../../../lib/certificateData";
 import { BookOpen, Calendar, Award, Sparkles, MessageSquare, Send, CheckCircle, Ticket, Compass, ArrowRight } from "lucide-react";
 import { formatDate } from "../../../lib/utils";
 
@@ -15,6 +16,7 @@ export default function MahasiswaOverviewDashboard() {
 
   const [joinedEvents, setJoinedEvents] = useState<EventItem[]>([]);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [statsSertifikatSiap, setStatsSertifikatSiap] = useState(0);
   
   // Gemini AI variables
   const [aiPrompt, setAiPrompt] = useState("");
@@ -56,6 +58,24 @@ export default function MahasiswaOverviewDashboard() {
       globalNotifs = INITIAL_NOTIFICATIONS;
     }
     setNotifications(globalNotifs.filter(n => n.visibility.includes("mahasiswa")));
+
+    // Sync certificates from dynamic source
+    const savedCerts = localStorage.getItem("eventhub_certs");
+    let certsList: UserCertificate[] = [];
+    if (savedCerts) {
+      try {
+        certsList = JSON.parse(savedCerts);
+      } catch (e) {
+        certsList = INITIAL_CERTIFICATES;
+      }
+    } else {
+      certsList = INITIAL_CERTIFICATES;
+      localStorage.setItem("eventhub_certs", JSON.stringify(INITIAL_CERTIFICATES));
+    }
+    const filteredCerts = certsList.filter(
+      (c) => c.isDistributed === true && c.userEmail === user.email
+    );
+    setStatsSertifikatSiap(filteredCerts.length);
 
   }, [user, loading, router]);
 
@@ -123,7 +143,7 @@ export default function MahasiswaOverviewDashboard() {
               </div>
               <div className="text-center md:text-left border-l border-r border-stone-105 px-2">
                 <span className="text-[10px] uppercase font-bold tracking-wider text-stone-400 block">Sertifikat Siap</span>
-                <span className="text-xl font-black text-emerald-600 font-mono block mt-1">2</span>
+                <span className="text-xl font-black text-emerald-600 font-mono block mt-1">{statsSertifikatSiap}</span>
               </div>
               <div className="text-center md:text-left">
                 <span className="text-[10px] uppercase font-bold tracking-wider text-stone-400 block">Kehadiran Scan</span>

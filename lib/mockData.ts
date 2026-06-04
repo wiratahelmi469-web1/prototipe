@@ -127,7 +127,7 @@ export const INITIAL_EVENTS: EventItem[] = [
     time: "08:00 - 16:00 WIB",
     location: "Student Hall GOR Kampus A",
     isOnline: false,
-    status: "Tutup",
+    status: "Buka Pendaftaran",
     progress: 100,
     pesertaCount: 64,
     urgentTasksCount: 0,

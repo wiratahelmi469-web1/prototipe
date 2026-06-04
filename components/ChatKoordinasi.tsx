@@ -33,7 +33,7 @@ const CHANNELS: Channel[] = [
   { id: "lintas-divisi",     name: "Lintas Divisi",     allowedRoles: ["panitia","po","staff"] },
   { id: "panitia-internal",  name: "Panitia Internal",  allowedRoles: ["panitia"] },
   { id: "po-koordinasi",     name: "PO Koordinasi",     allowedRoles: ["po"] },
-  { id: "staff-kemahasiswaan", name: "Staf Kemahasiswaan", allowedRoles: ["staff"] }
+  { id: "staff-kemahasiswaan", name: "Staf Kemahasiswaan", allowedRoles: ["staff-only-internal"] }
 ];
 
 const INITIAL_MESSAGES: MessageItem[] = [
