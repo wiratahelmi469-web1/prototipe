@@ -7,7 +7,7 @@ export interface EventItem {
   time: string;
   location: string;
   isOnline: boolean;
-  status: "Buka Pendaftaran" | "Hampir Penuh" | "Tutup" | "Selesai" | "Pending Approval";
+  status: "Buka Pendaftaran" | "Hampir Penuh" | "Tutup" | "Selesai" | "Pending Approval" | "Draft" | "Submitted" | "Under Review" | "Revision Requested" | "Approved" | "Rejected";
   progress: number; // For staff / panitia monitoring
   pesertaCount: number;
   urgentTasksCount: number;
