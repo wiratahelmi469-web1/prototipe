@@ -295,7 +295,7 @@ export default function PublicEventsPage() {
         location: registerEvent.location,
       });
 
-      addToast("Pendaftaran berhasil diproses!", "success");
+      addToast("Pendaftaran Berhasil! Anda telah terdaftar di event ini.", "success");
       setIsSubmitting(false);
       setIsRegistering(false);
     }, 1200);

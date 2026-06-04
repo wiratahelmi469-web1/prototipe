@@ -111,7 +111,7 @@ export default function EventDetailPage({ params }: PageProps) {
       } catch (e) { }
     }
 
-    addToast(`Sukses terdaftar! Tiket QR untuk '${evt.title}' telah dicetak di menu Riwayat.`, "success");
+    addToast("Pendaftaran Berhasil! Anda telah terdaftar di event ini.", "success");
   };
 
   if (!evt) {
@@ -129,14 +129,41 @@ export default function EventDetailPage({ params }: PageProps) {
   }
 
   // Check if participant registered
-  const isJoined = user?.isLoggedIn && (() => {
+  const isJoined = !!(user?.isLoggedIn && (() => {
     if (typeof window === "undefined") return false;
     const regs = localStorage.getItem(`registered_${user.email}_events`);
     if (regs) {
       try { return (JSON.parse(regs) as string[]).includes(evt.id); } catch(e) { return false; }
     }
     return false;
-  })();
+  })());
+
+  // Check if we need to map the display status for Mahasiswa
+  const getMappedStatusForMahasiswa = (status: string, hasJoined: boolean, currentPeserta: number) => {
+    if (hasJoined) {
+      return "Terdaftar";
+    }
+    const lowerStatus = status.toLowerCase();
+    
+    // Internal/Approval Workflow statuses leak prevention
+    const internalList = [
+      "pending approval", "pending_approval", "submitted", "under review", "under_review", 
+      "revision requested", "revision_requested", "draft", "rejected", "tutup", "selesai"
+    ];
+    
+    if (internalList.includes(lowerStatus)) {
+      if (lowerStatus === "rejected") {
+        return "Event Dibatalkan";
+      }
+      return "Pendaftaran Ditutup";
+    }
+
+    if (currentPeserta >= 150) {
+      return "Kuota Penuh";
+    }
+
+    return status; // "Buka Pendaftaran" / "Hampir Penuh"
+  };
 
   return (
     <Workspace id={`event_detail_workspace_${evt.id}`}>
@@ -161,13 +188,26 @@ export default function EventDetailPage({ params }: PageProps) {
               <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-md">
                 {evt.category}
               </span>
-              <span className={`text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full ${
-                evt.status === "Buka Pendaftaran" ? "bg-emerald-50 text-emerald-700 border border-emerald-100" :
-                evt.status === "Hampir Penuh" ? "bg-amber-50 text-amber-700 border border-amber-100" :
-                "bg-stone-50 border border-stone-200 text-stone-500"
-              }`}>
-                {evt.status}
-              </span>
+              {(() => {
+                const displayStatus = getMappedStatusForMahasiswa(evt.status, isJoined, evt.pesertaCount);
+                let badgeStyle = "bg-stone-50 border border-stone-200 text-stone-500";
+                
+                if (displayStatus === "Terdaftar" || displayStatus === "Buka Pendaftaran") {
+                  badgeStyle = "bg-emerald-50 text-emerald-700 border border-emerald-100";
+                } else if (displayStatus === "Hampir Penuh" || displayStatus === "Sudah Terdaftar") {
+                  badgeStyle = "bg-amber-50 text-amber-700 border border-amber-100";
+                } else if (displayStatus === "Kuota Penuh" || displayStatus === "Event Dibatalkan") {
+                  badgeStyle = "bg-rose-50 text-rose-700 border border-rose-100";
+                } else if (displayStatus === "Pendaftaran Ditutup") {
+                  badgeStyle = "bg-stone-100 text-stone-500 border border-stone-200";
+                }
+                
+                return (
+                  <span className={`text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full ${badgeStyle}`}>
+                    {displayStatus}
+                  </span>
+                );
+              })()}
             </div>
 
             {/* Title Header */}
@@ -259,36 +299,71 @@ export default function EventDetailPage({ params }: PageProps) {
               </div>
             </div>
 
-            {evt.status === "Pending Approval" ? (
-              <button
-                disabled
-                className="w-full py-3 text-center text-xs font-bold bg-purple-50 text-purple-400 border border-purple-100 rounded-xl cursor-not-allowed"
-              >
-                Menunggu Persetujuan PO
-              </button>
-            ) : isJoined ? (
+            {isJoined ? (
               <div className="space-y-3">
-                <div className="p-3.5 bg-emerald-50 border border-emerald-100 text-emerald-900 rounded-xl text-center text-xs font-bold">
-                  Anda sudah terdaftar dalam kegiatan ini!
+                <div className="p-3.5 bg-emerald-50 border border-emerald-100 text-emerald-900 rounded-xl text-center text-xs font-bold animate-fade-in">
+                  Pendaftaran Berhasil! Anda telah terdaftar di event ini.
                 </div>
                 <Link
                   href="/dashboard/mahasiswa/riwayat"
-                  className="w-full inline-flex items-center justify-center gap-1.5 py-3 text-center text-xs font-extrabold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-xs transition-all"
+                  className="w-full inline-flex items-center justify-center gap-1.5 py-3 text-center text-xs font-extrabold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-xs transition-colors"
                   id="claimed_badge_ticket_ref"
                 >
                   <Ticket className="w-4 h-4" />
                   Keluarkan Tiket QR Anda
                 </Link>
               </div>
-            ) : (
-              <button
-                onClick={handleRegister}
-                className="w-full py-3.5 text-center text-xs font-extrabold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md transition-all cursor-pointer"
-                id={`register_event_button_details_${evt.id}`}
-              >
-                Registrasi Peserta
-              </button>
-            )}
+            ) : (() => {
+              const lowerStatus = evt.status.toLowerCase();
+              const isInternal = [
+                "pending approval", "pending_approval", "submitted", "under review", "under_review", 
+                "revision requested", "revision_requested", "draft", "tutup", "selesai"
+              ].includes(lowerStatus);
+              const isFull = evt.pesertaCount >= 150;
+              
+              if (lowerStatus === "rejected") {
+                return (
+                  <button
+                    disabled
+                    className="w-full py-3 text-center text-xs font-bold bg-red-50 text-red-500 border border-red-100 rounded-xl cursor-not-allowed"
+                  >
+                    Event Dibatalkan
+                  </button>
+                );
+              }
+              
+              if (isInternal) {
+                return (
+                  <button
+                    disabled
+                    className="w-full py-3 text-center text-xs font-bold bg-stone-100 text-stone-400 border border-stone-200 rounded-xl cursor-not-allowed"
+                  >
+                    Pendaftaran Ditutup
+                  </button>
+                );
+              }
+              
+              if (isFull) {
+                return (
+                  <button
+                    disabled
+                    className="w-full py-3 text-center text-xs font-bold bg-rose-50 text-rose-500 border border-rose-100 rounded-xl cursor-not-allowed"
+                  >
+                    Kuota Penuh
+                  </button>
+                );
+              }
+              
+              return (
+                <button
+                  onClick={handleRegister}
+                  className="w-full py-3.5 text-center text-xs font-extrabold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md transition-all cursor-pointer"
+                  id={`register_event_button_details_${evt.id}`}
+                >
+                  Registrasi Peserta
+                </button>
+              );
+            })()}
           </div>
 
           {/* Coordinator Profile card */}

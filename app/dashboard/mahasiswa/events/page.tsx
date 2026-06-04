@@ -78,7 +78,7 @@ export default function MahasiswaEventsManager() {
     localStorage.setItem("eventhub_events", JSON.stringify(updatedEvents));
     setEvents(updatedEvents);
 
-    addToast(`Sukses bergabung di '${title}'! Tiket QR Anda dicetak.`, "success");
+    addToast("Pendaftaran Berhasil! Anda telah terdaftar di event ini.", "success");
   };
 
   const handleLeaveEvent = (eventId: string, title: string) => {
@@ -123,17 +123,49 @@ export default function MahasiswaEventsManager() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {events.map((evt) => {
             const hasJoined = registeredIds.includes(evt.id);
+            const lowerStatus = evt.status.toLowerCase();
+            const isInternal = [
+              "pending approval", "pending_approval", "submitted", "under review", "under_review", 
+              "revision requested", "revision_requested", "draft", "tutup", "selesai"
+            ].includes(lowerStatus);
+            const isFull = evt.pesertaCount >= 150;
 
             return (
               <div key={evt.id} className="bg-white border border-stone-200/90 rounded-2xl p-5 shadow-xs flex flex-col justify-between" id={`sub_mhs_evt_card_${evt.id}`}>
                 <div className="space-y-2">
                   <div className="flex justify-between items-center text-[10px] font-extrabold font-mono text-indigo-700 uppercase tracking-wider">
                     <span>{evt.category}</span>
-                    <span className={`px-2 py-0.5 rounded-sm ${
-                      hasJoined ? "bg-emerald-50 text-emerald-800" : "bg-stone-100 text-stone-500"
-                    }`}>
-                      {hasJoined ? "Telah Berpartisipasi" : "Belum Terdaftar"}
-                    </span>
+                    {(() => {
+                      let label = "Buka Pendaftaran";
+                      let badgeStyle = "bg-stone-50 border border-stone-200 text-stone-500";
+                      
+                      if (hasJoined) {
+                        label = "Terdaftar";
+                        badgeStyle = "bg-emerald-50 text-emerald-700 border border-emerald-100 font-bold";
+                      } else if (lowerStatus === "rejected") {
+                        label = "Event Dibatalkan";
+                        badgeStyle = "bg-rose-50 text-rose-700 border border-rose-100 font-bold";
+                      } else if (isInternal) {
+                        label = "Pendaftaran Ditutup";
+                        badgeStyle = "bg-stone-100 text-stone-500 border border-stone-200 font-bold";
+                      } else if (isFull) {
+                        label = "Kuota Penuh";
+                        badgeStyle = "bg-rose-50 text-rose-700 border border-rose-100 font-bold";
+                      } else {
+                        label = evt.status;
+                        if (evt.status === "Buka Pendaftaran") {
+                          badgeStyle = "bg-emerald-50 text-emerald-700 border border-emerald-100 font-bold";
+                        } else if (evt.status === "Hampir Penuh") {
+                          badgeStyle = "bg-amber-50 text-amber-700 border border-amber-100 font-bold";
+                        }
+                      }
+                      
+                      return (
+                        <span className={`px-2 py-0.5 rounded-full border text-[9px] uppercase tracking-wider ${badgeStyle}`}>
+                          {label}
+                        </span>
+                      );
+                    })()}
                   </div>
                   <h4 className="text-sm font-bold text-stone-800 line-clamp-2 leading-snug">{evt.title}</h4>
                   <p className="text-[10px] text-stone-400 mt-0.5">oleh {evt.organizer}</p>
@@ -146,11 +178,7 @@ export default function MahasiswaEventsManager() {
                 </div>
 
                 <div className="mt-5 pt-4 border-t border-stone-100 flex items-center gap-2">
-                  {evt.status === "Pending Approval" ? (
-                    <button disabled className="w-full py-2 bg-stone-200 text-stone-400 text-xs font-bold rounded-xl cursor-not-allowed">
-                      Pending Approvals
-                    </button>
-                  ) : hasJoined ? (
+                  {hasJoined ? (
                     <button
                       onClick={() => handleLeaveEvent(evt.id, evt.title)}
                       className="w-full py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-100/60 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
@@ -159,16 +187,40 @@ export default function MahasiswaEventsManager() {
                       <Trash2 className="w-3.5 h-3.5 shrink-0" />
                       Batalkan Kehadiran
                     </button>
-                  ) : (
-                    <button
-                      onClick={() => handleRegister(evt.id, evt.title)}
-                      className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-all inline-flex items-center justify-center gap-1.5 cursor-pointer"
-                      id={`opt_in_btn_${evt.id}`}
-                    >
-                      <CheckCircle className="w-3.5 h-3.5 shrink-0" />
-                      Gabung Sekarang
-                    </button>
-                  )}
+                  ) : (() => {
+                    if (lowerStatus === "rejected") {
+                      return (
+                        <button disabled className="w-full py-2 bg-rose-50 text-rose-500 border border-rose-100 text-xs font-bold rounded-xl cursor-not-allowed">
+                          Event Dibatalkan
+                        </button>
+                      );
+                    }
+                    if (isInternal) {
+                      return (
+                        <button disabled className="w-full py-2 bg-stone-100 text-stone-400 border border-stone-250 text-xs font-bold rounded-xl cursor-not-allowed">
+                          Pendaftaran Ditutup
+                        </button>
+                      );
+                    }
+                    if (isFull) {
+                      return (
+                        <button disabled className="w-full py-2 bg-rose-50 text-rose-500 border border-rose-100 text-xs font-bold rounded-xl cursor-not-allowed">
+                          Kuota Penuh
+                        </button>
+                      );
+                    }
+                    
+                    return (
+                      <button
+                        onClick={() => handleRegister(evt.id, evt.title)}
+                        className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-all inline-flex items-center justify-center gap-1.5 cursor-pointer"
+                        id={`opt_in_btn_${evt.id}`}
+                      >
+                        <CheckCircle className="w-3.5 h-3.5 shrink-0" />
+                        Gabung Sekarang
+                      </button>
+                    );
+                  })()}
                 </div>
               </div>
             );
