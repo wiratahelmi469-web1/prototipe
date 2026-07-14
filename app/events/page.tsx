@@ -129,7 +129,7 @@ export default function PublicEventsPage() {
   const getGradientForCategory = (category: string) => {
     switch (category) {
       case "Seminar":
-        return "from-[#0F1E3C] via-[#1a315e] to-indigo-950";
+        return "from-[#0F1E3C] via-[#1a315e] to-[#0F1E3C]";
       case "Workshop":
         return "from-[#0d3326] via-[#114030] to-emerald-950";
       case "Lomba":
@@ -139,7 +139,7 @@ export default function PublicEventsPage() {
       case "Sosial":
         return "from-[#4c151b] via-[#661d24] to-zinc-900";
       default:
-        return "from-slate-900 via-indigo-950 to-stone-900";
+        return "from-slate-900 via-[#0F1E3C] to-stone-900";
     }
   };
 

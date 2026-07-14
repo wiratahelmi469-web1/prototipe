@@ -133,7 +133,7 @@ export default function MahasiswaEventsManager() {
             return (
               <div key={evt.id} className="bg-white border border-stone-200/90 rounded-2xl p-5 shadow-xs flex flex-col justify-between" id={`sub_mhs_evt_card_${evt.id}`}>
                 <div className="space-y-2">
-                  <div className="flex justify-between items-center text-[10px] font-extrabold font-mono text-indigo-700 uppercase tracking-wider">
+                  <div className="flex justify-between items-center text-[10px] font-extrabold font-mono text-navy uppercase tracking-wider">
                     <span>{evt.category}</span>
                     {(() => {
                       let label = "Buka Pendaftaran";
@@ -213,7 +213,7 @@ export default function MahasiswaEventsManager() {
                     return (
                       <button
                         onClick={() => handleRegister(evt.id, evt.title)}
-                        className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-all inline-flex items-center justify-center gap-1.5 cursor-pointer"
+                        className="w-full py-2 bg-navy hover:bg-navy-mid text-white rounded-xl text-xs font-bold transition-all inline-flex items-center justify-center gap-1.5 cursor-pointer"
                         id={`opt_in_btn_${evt.id}`}
                       >
                         <CheckCircle className="w-3.5 h-3.5 shrink-0" />

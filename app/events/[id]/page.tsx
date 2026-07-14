@@ -120,7 +120,7 @@ export default function EventDetailPage({ params }: PageProps) {
         <div className="py-20 text-center bg-white border border-stone-150 rounded-2xl max-w-md mx-auto">
           <HelpCircleIcon />
           <h4 className="text-sm font-bold text-stone-700 mt-2">Data Event tidak ditemukan</h4>
-          <Link href="/events" className="mt-4 inline-flex text-xs font-bold text-indigo-600 hover:underline">
+          <Link href="/events" className="mt-4 inline-flex text-xs font-bold text-navy hover:underline">
             Kembali ke Kalender Event
           </Link>
         </div>
@@ -172,7 +172,7 @@ export default function EventDetailPage({ params }: PageProps) {
       {/* Back breadcrumb navigation */}
       <Link
         href="/events"
-        className="inline-flex items-center gap-1.5 text-xs text-stone-500 hover:text-indigo-600 transition-colors font-semibold mb-6"
+        className="inline-flex items-center gap-1.5 text-xs text-stone-500 hover:text-navy transition-colors font-semibold mb-6"
         id="detail_back_to_events"
       >
         <ArrowLeft className="w-3.5 h-3.5" />
@@ -185,7 +185,7 @@ export default function EventDetailPage({ params }: PageProps) {
           <div className="bg-white border border-stone-200/80 rounded-2xl p-6 md:p-8 shadow-xs">
             {/* Meta Tags */}
             <div className="flex items-center gap-2 mb-4">
-              <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-md">
+              <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 bg-navy-tint text-navy border border-navy-light/10 rounded-md">
                 {evt.category}
               </span>
               {(() => {
@@ -228,25 +228,25 @@ export default function EventDetailPage({ params }: PageProps) {
           {/* Rundown Schedule Card */}
           <div className="bg-white border border-stone-200/80 rounded-2xl p-6 shadow-xs">
             <h3 className="text-xs font-black uppercase text-stone-400 tracking-wider mb-4 flex items-center gap-1.5">
-              <Clock className="w-4 h-4 text-indigo-500" />
+              <Clock className="w-4 h-4 text-navy" />
               RUNDOWN &amp; ACARA INTENS KAMPUS
             </h3>
 
             {rundowns.length === 0 ? (
               <p className="text-xs text-stone-400 italic">Rundown detail sedang difinalisasi oleh Panitia Humas.</p>
             ) : (
-              <div className="relative border-l border-indigo-100 ml-2.5 pl-5.5 space-y-5">
+              <div className="relative border-l border-navy-light/10 ml-2.5 pl-5.5 space-y-5">
                 {rundowns.map((item) => (
                   <div key={item.id} className="relative" id={`rundown_item_${item.id}`}>
                     {/* Ring timeline point */}
                     <span className={`absolute -left-[28.5px] top-1.5 w-3 h-3 rounded-full ring-4 ring-white ${
-                      item.isLive ? "bg-indigo-600 animate-ping" : "bg-stone-200"
+                      item.isLive ? "bg-navy animate-ping" : "bg-stone-200"
                     }`} />
                     <span className={`absolute -left-[28.5px] top-1.5 w-3 h-3 rounded-full ring-4 ring-white ${
-                      item.isLive ? "bg-indigo-600" : "bg-stone-200"
+                      item.isLive ? "bg-navy" : "bg-stone-200"
                     }`} />
 
-                    <div className="flex items-center gap-1.5 text-[10px] font-bold text-indigo-600 font-mono">
+                    <div className="flex items-center gap-1.5 text-[10px] font-bold text-navy font-mono">
                       <span>{item.timeStart} - {item.timeEnd} WIB</span>
                       {item.isLive && (
                         <span className="bg-rose-100 text-rose-800 text-[8px] tracking-wide font-extrabold px-1.5 py-0.5 rounded-sm flex items-center gap-0.5 animate-pulse uppercase">
@@ -306,7 +306,7 @@ export default function EventDetailPage({ params }: PageProps) {
                 </div>
                 <Link
                   href="/dashboard/mahasiswa/riwayat"
-                  className="w-full inline-flex items-center justify-center gap-1.5 py-3 text-center text-xs font-extrabold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-xs transition-colors"
+                  className="w-full inline-flex items-center justify-center gap-1.5 py-3 text-center text-xs font-extrabold bg-navy hover:bg-navy-mid text-white rounded-xl shadow-xs transition-colors"
                   id="claimed_badge_ticket_ref"
                 >
                   <Ticket className="w-4 h-4" />
@@ -357,7 +357,7 @@ export default function EventDetailPage({ params }: PageProps) {
               return (
                 <button
                   onClick={handleRegister}
-                  className="w-full py-3.5 text-center text-xs font-extrabold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md transition-all cursor-pointer"
+                  className="w-full py-3.5 text-center text-xs font-extrabold bg-navy hover:bg-navy-mid text-white rounded-xl shadow-md transition-all cursor-pointer"
                   id={`register_event_button_details_${evt.id}`}
                 >
                   Registrasi Peserta
@@ -370,7 +370,7 @@ export default function EventDetailPage({ params }: PageProps) {
           <div className="bg-stone-100/50 border border-stone-200 rounded-2xl p-5">
             <h4 className="text-[10px] font-black uppercase text-stone-450 tracking-wider mb-2.5">PENGHUBUNG PANITIA</h4>
             <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-black text-sm">
+              <div className="w-10 h-10 rounded-full bg-navy-tint text-navy flex items-center justify-center font-black text-sm">
                 <User className="w-5 h-5" />
               </div>
               <div>

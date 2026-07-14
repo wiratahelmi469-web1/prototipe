@@ -64,7 +64,7 @@ export default function LoginPage() {
 
       <Link
         href="/events"
-        className="absolute top-6 left-6 inline-flex items-center gap-1.5 text-xs text-stone-500 hover:text-indigo-600 transition-colors font-semibold"
+        className="absolute top-6 left-6 inline-flex items-center gap-1.5 text-xs text-stone-500 hover:text-navy transition-colors font-semibold"
         id="back_to_events_link"
       >
         <ArrowLeft className="w-3.5 h-3.5" />
@@ -74,8 +74,8 @@ export default function LoginPage() {
       <div className="w-full max-w-md" id="login_form_container">
         {/* Brand Card Header */}
         <div className="text-center mb-8">
-          <span className="inline-flex p-3 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600 mb-3.5 shadow-xs">
-            <KeyRound className="w-6 h-6" />
+          <span className="inline-flex p-3 rounded-2xl bg-navy-tint border border-navy-light/10 text-navy mb-3.5 shadow-xs">
+            <KeyRound className="w-6 h-6 text-[#F5A623]" />
           </span>
           <h2 className="text-xl font-bold tracking-tight text-stone-950">
             Masuk ke EventHub Kampus
@@ -107,7 +107,7 @@ export default function LoginPage() {
                   placeholder="name@nurulfikri.ac.id"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full text-xs bg-stone-50 border border-stone-200 rounded-xl px-4.5 py-3 pl-11 outline-hidden focus:border-indigo-500/80 focus:bg-white transition-all font-semibold"
+                  className="w-full text-xs bg-stone-50 border border-stone-200 rounded-xl px-4.5 py-3 pl-11 outline-hidden focus:border-navy-light focus:bg-white transition-all font-semibold text-stone-850"
                 />
                 <Mail className="absolute left-4 top-3.5 w-4 h-4 text-stone-400" />
               </div>
@@ -127,7 +127,7 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full text-xs bg-stone-50 border border-stone-200 rounded-xl px-4.5 py-3 pl-11 outline-hidden focus:border-indigo-500/80 focus:bg-white transition-all font-semibold"
+                  className="w-full text-xs bg-stone-50 border border-stone-200 rounded-xl px-4.5 py-3 pl-11 outline-hidden focus:border-navy-light focus:bg-white transition-all font-semibold text-stone-850"
                 />
                 <KeyRound className="absolute left-4 top-3.5 w-4 h-4 text-stone-400" />
               </div>
@@ -136,7 +136,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+              className="w-full text-xs bg-navy hover:bg-navy-mid text-white font-bold py-3 px-4 rounded-xl shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
               id="submit_login_btn"
             >
               <LogIn className="w-4 h-4" />
@@ -147,7 +147,7 @@ export default function LoginPage() {
           {/* New to EventHub link */}
           <div className="text-center mt-5 pt-4 border-t border-stone-100">
             <span className="text-xs text-stone-400">Belum punya akun? </span>
-            <Link href="/register" className="text-xs font-bold text-indigo-600 hover:text-indigo-800 transition-all" id="go_to_register_link">
+            <Link href="/register" className="text-xs font-bold text-navy hover:text-navy-mid transition-all" id="go_to_register_link">
               Registrasi Disini
             </Link>
           </div>
@@ -156,7 +156,7 @@ export default function LoginPage() {
         {/* PRESET KREDENSIAL FOR COZY TESTING */}
         <div className="mt-8 bg-stone-100/50 p-5 rounded-2xl border border-stone-200" id="preset_accounts_card">
           <p className="text-[10px] font-black uppercase text-stone-400 tracking-wider flex items-center gap-1.5 mb-4">
-            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+            <Sparkles className="w-3.5 h-3.5 text-gold" />
             AKUN DEMO KILAT (KLIK UNTUK LOGIN INSTAN)
           </p>
           <div className="grid grid-cols-2 gap-2">
@@ -164,10 +164,10 @@ export default function LoginPage() {
               <button
                 key={preset.email}
                 onClick={() => handlePresetLogin(preset.email, preset.role, preset.name)}
-                className="p-3 bg-white hover:bg-indigo-50 border border-stone-200/50 rounded-xl text-left hover:border-indigo-300 transition-all shadow-xs shrink-0 cursor-pointer"
+                className="p-3 bg-white hover:bg-navy-tint border border-stone-200/50 rounded-xl text-left hover:border-navy-light/40 transition-all shadow-xs shrink-0 cursor-pointer"
                 id={`preset_login_${preset.role}`}
               >
-                <p className="text-xs font-bold text-stone-800 line-clamp-1">{preset.name.split(" ")[0]} ({preset.role.toUpperCase()})</p>
+                <p className="text-xs font-bold text-navy line-clamp-1">{preset.name.split(" ")[0]} ({preset.role.toUpperCase()})</p>
                 <code className="text-[8px] font-mono text-stone-400 block mt-0.5 truncate">{preset.email}</code>
               </button>
             ))}

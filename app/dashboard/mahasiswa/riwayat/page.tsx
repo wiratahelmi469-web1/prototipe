@@ -50,7 +50,7 @@ export default function RiwayatTiketMahasiswa() {
         {/* Page Head */}
         <div>
           <h2 className="text-xl font-bold tracking-tight text-stone-900 flex items-center gap-2">
-            <Ticket className="w-5 h-5 text-indigo-600" />
+            <Ticket className="w-5 h-5 text-navy" />
             Riwayat &amp; Tiket Akses Saya
           </h2>
           <p className="text-xs text-stone-500 mt-1">
@@ -66,7 +66,7 @@ export default function RiwayatTiketMahasiswa() {
             <p className="text-xs text-stone-500 mt-1">Silakan kunjungi Kalender Event Kampus untuk registrasi.</p>
             <Link
               href="/events"
-              className="mt-4 inline-flex items-center gap-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl py-2 px-4 text-xs font-bold transition-all shadow-xs"
+              className="mt-4 inline-flex items-center gap-1 bg-navy hover:bg-navy-mid text-white rounded-xl py-2 px-4 text-xs font-bold transition-all shadow-xs"
             >
               Cari Event Menarik
             </Link>

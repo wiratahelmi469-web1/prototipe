@@ -25,8 +25,8 @@ export default function GuestDashboardPage() {
         {/* Welcome Unit */}
         <div className="bg-white border border-stone-200 rounded-3xl p-6 md:p-8 shadow-xs flex flex-col md:flex-row items-center gap-6 justify-between">
           <div className="space-y-2">
-            <span className="inline-flex items-center gap-1.5 text-[10px] uppercase font-bold tracking-widest text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-md border border-indigo-100">
-              <Sparkles className="w-3.5 h-3.5 animate-pulse" /> Mode Eksplorasi Tamu
+            <span className="inline-flex items-center gap-1.5 text-[10px] uppercase font-bold tracking-widest text-navy bg-navy-tint px-2.5 py-0.5 rounded-md border border-navy-light/10">
+              <Sparkles className="w-3.5 h-3.5 text-[#F5A623] animate-pulse" /> Mode Eksplorasi Tamu
             </span>
             <h2 className="text-xl font-bold tracking-tight text-stone-900">
               Selamat Datang di EventHub Kampus!
@@ -37,10 +37,10 @@ export default function GuestDashboardPage() {
           </div>
           <Link
             href="/login"
-            className="px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-xs shadow-xs shrink-0 transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+            className="px-5 py-3 bg-navy hover:bg-navy-mid text-white rounded-xl font-bold text-xs shadow-xs shrink-0 transition-colors inline-flex items-center gap-1.5 cursor-pointer"
             id="guest_login_link"
           >
-            <LogIn className="w-4 h-4" />
+            <LogIn className="w-4 h-4 text-gold" />
             Sign In / Register
           </Link>
         </div>
@@ -48,7 +48,7 @@ export default function GuestDashboardPage() {
         {/* Catalog Section */}
         <div>
           <h3 className="text-xs font-black uppercase text-stone-400 tracking-wider mb-4 flex items-center gap-1.5">
-            <Calendar className="w-4 h-4 text-indigo-500" />
+            <Calendar className="w-4 h-4 text-navy" />
             DAFTAR EVENT AKTIF (PUBLIC VIEW)
           </h3>
 
@@ -60,7 +60,7 @@ export default function GuestDashboardPage() {
                     <span className="text-[9px] font-extrabold uppercase bg-stone-50 text-stone-500 border border-stone-200 px-2 py-0.5 rounded">
                       {evt.category}
                     </span>
-                    <span className="text-[9px] uppercase font-mono tracking-wider font-bold text-indigo-600">{evt.status}</span>
+                    <span className="text-[9px] uppercase font-mono tracking-wider font-bold text-navy">{evt.status}</span>
                   </div>
                   <h4 className="text-sm font-bold text-stone-800 leading-snug line-clamp-2">{evt.title}</h4>
                   <p className="text-[10px] text-stone-400 mt-0.5 mb-3">oleh {evt.organizer}</p>
@@ -69,7 +69,7 @@ export default function GuestDashboardPage() {
 
                 <div className="mt-4 pt-4 border-t border-stone-100 flex items-center justify-between text-stone-500 font-semibold text-[11px]">
                   <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5 text-stone-400" /> {evt.location}</span>
-                  <Link href={`/events/${evt.id}`} className="text-indigo-600 hover:text-indigo-800 text-xs font-bold transition-colors">
+                  <Link href={`/events/${evt.id}`} className="text-navy hover:text-navy-mid text-xs font-bold transition-colors">
                     Selengkapnya &rarr;
                   </Link>
                 </div>

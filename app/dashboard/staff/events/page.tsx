@@ -53,7 +53,7 @@ export default function StaffEventsCalendar() {
               onClick={() => setFilterType(cat)}
               className={`px-3 py-1.5 text-xs font-bold rounded-lg shrink-0 transition-all cursor-pointer ${
                 filterType === cat
-                  ? "bg-indigo-600 text-white font-black"
+                  ? "bg-navy text-white font-black"
                   : "bg-white border border-stone-200 text-stone-605 hover:bg-stone-50"
               }`}
             >
@@ -68,7 +68,7 @@ export default function StaffEventsCalendar() {
             <div key={evt.id} className="bg-white border border-stone-200/90 rounded-2xl p-5 shadow-xs flex flex-col justify-between" id={`staff_mgt_evt_card_${evt.id}`}>
               <div className="space-y-2">
                 <div className="flex justify-between items-center text-[10px] font-extrabold uppercase font-mono">
-                  <span className="text-indigo-750">{evt.category}</span>
+                  <span className="text-navy">{evt.category}</span>
                   <span className="text-stone-400">{evt.status}</span>
                 </div>
                 <h4 className="text-sm font-bold text-stone-850 leading-snug line-clamp-1">{evt.title}</h4>

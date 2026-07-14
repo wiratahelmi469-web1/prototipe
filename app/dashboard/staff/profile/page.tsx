@@ -177,13 +177,13 @@ export default function StaffProfilePage() {
               
               {/* BAGIAN 1 - Header Avatar */}
               <div className="flex flex-col sm:flex-row items-center gap-5 pb-6 mb-6 border-b border-stone-100">
-                <div className="w-24 h-24 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center font-extrabold text-3xl uppercase shadow-inner border border-purple-200 shrink-0">
+                <div className="w-24 h-24 rounded-full bg-navy-tint text-navy flex items-center justify-center font-extrabold text-3xl uppercase shadow-inner border border-navy-light/10 shrink-0">
                   {avatarInitial}
                 </div>
                 <div className="text-center sm:text-left space-y-1">
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                     <h3 className="font-black text-xl text-stone-900 tracking-tight">{name || user.name}</h3>
-                    <span className="text-[10px] font-black uppercase tracking-wider bg-purple-100 text-purple-700 px-3 py-0.5 rounded-full border border-purple-200 self-center font-semibold">
+                    <span className="text-[10px] font-black uppercase tracking-wider bg-navy-tint text-navy px-3 py-0.5 rounded-full border border-navy-light/10 self-center font-semibold">
                       Staff Kemahasiswaan
                     </span>
                   </div>
@@ -204,7 +204,7 @@ export default function StaffProfilePage() {
                         id="staff_profile_name"
                         type="text"
                         required
-                        className="w-full text-xs bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 pl-10 outline-hidden focus:border-indigo-500 focus:bg-white transition-all font-semibold text-stone-850"
+                        className="w-full text-xs bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 pl-10 outline-hidden focus:border-navy focus:bg-white transition-all font-semibold text-stone-850"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                       />
@@ -219,7 +219,7 @@ export default function StaffProfilePage() {
                         id="staff_profile_phone"
                         type="text"
                         placeholder="08xxxxxxxxxx"
-                        className="w-full text-xs bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 pl-10 outline-hidden focus:border-indigo-500 focus:bg-white transition-all font-semibold text-stone-850"
+                        className="w-full text-xs bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 pl-10 outline-hidden focus:border-navy focus:bg-white transition-all font-semibold text-stone-850"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                       />
@@ -236,7 +236,7 @@ export default function StaffProfilePage() {
                         id="staff_profile_nip"
                         type="text"
                         placeholder="Masukkan NIP Staf"
-                        className="w-full text-xs bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 pl-10 outline-hidden focus:border-indigo-500 focus:bg-white transition-all font-semibold text-stone-850"
+                        className="w-full text-xs bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 pl-10 outline-hidden focus:border-navy focus:bg-white transition-all font-semibold text-stone-850"
                         value={nip}
                         onChange={(e) => setNip(e.target.value)}
                       />
@@ -251,7 +251,7 @@ export default function StaffProfilePage() {
                         id="staff_profile_faculty"
                         type="text"
                         placeholder="Contoh: Unit Kegiatan Mahasiswa"
-                        className="w-full text-xs bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 pl-10 outline-hidden focus:border-indigo-500 focus:bg-white transition-all font-semibold text-stone-850"
+                        className="w-full text-xs bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 pl-10 outline-hidden focus:border-navy focus:bg-white transition-all font-semibold text-stone-850"
                         value={division}
                         onChange={(e) => setDivision(e.target.value)}
                       />
@@ -284,7 +284,7 @@ export default function StaffProfilePage() {
                     id="staff_profile_bio"
                     maxLength={200}
                     placeholder="Tulis biografi ringkas layanan administrasi Anda..."
-                    className="w-full text-xs bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 min-h-[80px] max-h-[140px] outline-hidden focus:border-indigo-500 focus:bg-white transition-all font-semibold text-stone-850 leading-relaxed"
+                    className="w-full text-xs bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 min-h-[80px] max-h-[140px] outline-hidden focus:border-navy focus:bg-white transition-all font-semibold text-stone-850 leading-relaxed"
                     value={bio}
                     onChange={(e) => setBio(e.target.value)}
                   />
@@ -304,7 +304,7 @@ export default function StaffProfilePage() {
 
                   <button
                     type="submit"
-                    className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
+                    className="px-6 py-3 bg-navy hover:bg-navy-mid text-white font-bold rounded-xl text-xs shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
                     id="save_staff_profile_btn"
                   >
                     <Save className="w-4 h-4" />
@@ -320,7 +320,7 @@ export default function StaffProfilePage() {
             <h4 className="text-[10px] font-black uppercase text-stone-400 tracking-wider">MONITORING KAMPUS</h4>
 
             <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-xs flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center border border-purple-100 shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-navy-tint text-navy flex items-center justify-center border border-navy-light/10 shrink-0">
                 <Users className="w-5 h-5" />
               </div>
               <div className="space-y-0.5">
@@ -330,7 +330,7 @@ export default function StaffProfilePage() {
             </div>
 
             <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-xs flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100 shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-navy-tint text-navy flex items-center justify-center border border-navy-light/10 shrink-0">
                 <Calendar className="w-5 h-5" />
               </div>
               <div className="space-y-0.5">

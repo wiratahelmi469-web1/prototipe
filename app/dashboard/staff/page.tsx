@@ -294,7 +294,7 @@ export default function StaffApprovalDashboard() {
         {/* Staff Header Panel */}
         <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-xs flex flex-col md:flex-row items-center gap-4.5 justify-between">
           <div className="flex items-center gap-4 min-w-0 flex-1">
-            <div className="w-12 h-12 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 flex items-center justify-center font-extrabold text-base uppercase shrink-0">
+            <div className="w-12 h-12 rounded-full bg-navy-tint border border-navy-light/10 text-navy flex items-center justify-center font-extrabold text-base uppercase shrink-0">
               {user.name[0]}
             </div>
             <div className="min-w-0">
@@ -366,13 +366,13 @@ export default function StaffApprovalDashboard() {
                 <CheckCircle2 className="w-8 h-8 text-emerald-300 hidden sm:block" />
               </div>
 
-              <div className="bg-white border border-stone-200 p-5 rounded-xl shadow-2xs flex items-center justify-between border-l-4 border-l-indigo-600">
+              <div className="bg-white border border-stone-200 p-5 rounded-xl shadow-2xs flex items-center justify-between border-l-4 border-l-navy">
                 <div>
-                  <span className="text-[9px] font-black uppercase text-indigo-700 tracking-wider block">Anggaran Disetujui</span>
-                  <span className="text-lg font-black text-indigo-750 font-mono mt-1 block">Rp {totalApprovedBudget.toLocaleString("id-ID")}</span>
+                  <span className="text-[9px] font-black uppercase text-navy tracking-wider block">Anggaran Disetujui</span>
+                  <span className="text-lg font-black text-navy font-mono mt-1 block">Rp {totalApprovedBudget.toLocaleString("id-ID")}</span>
                   <span className="text-[9px] text-stone-400 mt-1 block">Dari Rp {totalSubmittedBudget.toLocaleString("id-ID")} diajukan</span>
                 </div>
-                <DollarSign className="w-8 h-8 text-indigo-350 hidden sm:block" />
+                <DollarSign className="w-8 h-8 text-navy-light/40 hidden sm:block" />
               </div>
             </div>
 
@@ -382,7 +382,7 @@ export default function StaffApprovalDashboard() {
                 <h3 className="text-xs font-bold uppercase text-stone-450 tracking-wider">ANTREAN REVIEW TERBARU</h3>
                 <button
                   onClick={() => setActiveTab("queue")}
-                  className="text-xs font-bold text-indigo-650 hover:text-indigo-800 flex items-center gap-1.5"
+                  className="text-xs font-bold text-navy hover:text-navy-mid flex items-center gap-1.5"
                 >
                   Buka Seluruh Antrean <ArrowRight className="w-3.5 h-3.5" />
                 </button>
@@ -399,7 +399,7 @@ export default function StaffApprovalDashboard() {
                     <div key={evt.id} className="p-4 bg-white hover:bg-stone-50 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors" id={`staff_queue_row_${evt.id}`}>
                       <div>
                         <div className="flex items-center gap-2 text-[9px] font-extrabold font-mono">
-                          <span className="text-indigo-705 uppercase">{evt.category}</span>
+                          <span className="text-navy uppercase">{evt.category}</span>
                           <span className="text-stone-300">•</span>
                           <span className={`${getStatusBadgeClass(evt.status)} px-1.5 py-0.1 uppercase rounded-xs font-mono`}>{evt.status}</span>
                         </div>
@@ -414,7 +414,7 @@ export default function StaffApprovalDashboard() {
                         </div>
                         <button
                           onClick={() => startReviewingEvent(evt)}
-                          className="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-colors cursor-pointer text-center"
+                          className="px-3.5 py-2 bg-navy hover:bg-navy-mid text-white rounded-xl text-xs font-bold transition-colors cursor-pointer text-center"
                         >
                           Review Proposal
                         </button>
@@ -519,7 +519,7 @@ export default function StaffApprovalDashboard() {
                                 </span>
                               </div>
                               {b.poNote && <p className="text-[10px] text-stone-400 italic mt-0.5">PO: {b.poNote}</p>}
-                              {b.reviewerNote && <p className="text-[10px] text-indigo-650 bg-indigo-50 border border-indigo-100 p-0.5 px-1.5 rounded-sm inline-block mt-0.5">Catatan Staf: {b.reviewerNote}</p>}
+                              {b.reviewerNote && <p className="text-[10px] text-navy bg-navy-tint border border-navy-light/10 p-0.5 px-1.5 rounded-sm inline-block mt-0.5">Catatan Staf: {b.reviewerNote}</p>}
                             </div>
 
                             <div className="flex items-center gap-4 text-right shrink-0">
@@ -652,7 +652,7 @@ export default function StaffApprovalDashboard() {
             {/* Header */}
             <div className="p-4 bg-stone-900 text-stone-100 sticky top-0 flex items-center justify-between z-10">
               <div className="min-w-0">
-                <span className="text-[8.5px] font-bold bg-indigo-900 text-indigo-100 px-2.5 py-0.5 rounded border border-indigo-950 font-mono uppercase block">
+                <span className="text-[8.5px] font-bold bg-navy text-white px-2.5 py-0.5 rounded border border-navy-mid font-mono uppercase block">
                   Panel Evaluasi Approval Kemahasiswaan
                 </span>
                 <h4 className="text-sm font-black text-white mt-1 leading-snug truncate">
@@ -737,7 +737,7 @@ export default function StaffApprovalDashboard() {
                             </div>
                             {b.poNote && <p className="text-[10px] text-stone-400 font-semibold italic mt-0.5">Catatan PO: {b.poNote}</p>}
                             {b.reviewerNote && (
-                              <p className="text-[10.5px] text-indigo-705 bg-indigo-50 border border-indigo-100 p-0.5 px-2 rounded-xs mt-1.5">
+                              <p className="text-[10.5px] text-navy bg-navy-tint border border-navy-light/10 p-0.5 px-2 rounded-xs mt-1.5">
                                 Catatan Penguji: {b.reviewerNote}
                               </p>
                             )}
@@ -791,7 +791,7 @@ export default function StaffApprovalDashboard() {
                   ) : (
                     getEventLogs(inspectEvt.id).map((log, idx) => (
                       <div key={idx} className="flex gap-4 relative z-10 text-xs">
-                        <div className="w-5 h-5 rounded-full bg-white border-2 border-indigo-650 text-indigo-700 font-mono font-bold text-[9px] flex items-center justify-center shrink-0 shadow-3xs">
+                        <div className="w-5 h-5 rounded-full bg-white border-2 border-navy text-navy font-mono font-bold text-[9px] flex items-center justify-center shrink-0 shadow-3xs">
                           {idx + 1}
                         </div>
                         <div className="flex-grow space-y-0.5">
@@ -810,9 +810,9 @@ export default function StaffApprovalDashboard() {
 
               {/* FINAL AUDIT DECISION MODULE FORM SECTION */}
               {inspectEvt.status !== "Approved" && inspectEvt.status !== "Rejected" && (
-                <form onSubmit={handleFinalizeDecision} className="p-4 border border-indigo-150 bg-indigo-50/20 rounded-xl space-y-4">
+                <form onSubmit={handleFinalizeDecision} className="p-4 border border-navy-light/15 bg-navy-tint/20 rounded-xl space-y-4">
                   <div className="space-y-1.5">
-                    <span className="text-indigo-750 font-black uppercase text-[10px] tracking-wider block font-mono">Tentukan Keputusan Final Evaluasi:</span>
+                    <span className="text-navy font-black uppercase text-[10px] tracking-wider block font-mono">Tentukan Keputusan Final Evaluasi:</span>
                     <p className="text-[11px] text-stone-450">Pilih salah satu status di bawah demi mengirim rilis keputusan kelayakan ke PO pengaju.</p>
                   </div>
 
@@ -864,7 +864,7 @@ export default function StaffApprovalDashboard() {
                   </div>
 
                   {decisionType && (
-                    <div className="space-y-2.5 pt-1 bg-white p-3.5 border border-indigo-100 rounded-lg animate-in slide-in-from-top-2 duration-150">
+                    <div className="space-y-2.5 pt-1 bg-white p-3.5 border border-navy-light/10 rounded-lg animate-in slide-in-from-top-2 duration-150">
                       <label className="block text-[9.5px] font-extrabold uppercase text-stone-450 font-mono">
                         Catatan reviewer kemahasiswaan {isNoteRequired && <span className="text-rose-500 font-extrabold">* (Wajib diisi)</span>}
                       </label>
@@ -886,7 +886,7 @@ export default function StaffApprovalDashboard() {
                       <div className="flex justify-end pt-1">
                         <button
                           type="submit"
-                          className="px-5 py-2.5 bg-indigo-650 hover:bg-indigo-755 text-white font-bold rounded-xl text-xs transition-all shadow-xs cursor-pointer flex items-center gap-1"
+                          className="px-5 py-2.5 bg-navy hover:bg-navy-mid text-white font-bold rounded-xl text-xs transition-all shadow-xs cursor-pointer flex items-center gap-1"
                         >
                           <Send className="w-4 h-4" />
                           Publish Keputusan Review
